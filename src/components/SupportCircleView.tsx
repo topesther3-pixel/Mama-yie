@@ -1,0 +1,179 @@
+import React, { useState } from 'react';
+import { useApp } from '../context/AppContext';
+import { Users, Heart, ShieldCheck, Send, Sparkles, CheckCircle2, MessageCircle } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const SupportCircleView: React.FC = () => {
+  const { supportCircle, addSupportCircleMessage, user } = useApp();
+  const [newMsg, setNewMsg] = useState('');
+
+  const collectiveProgress = Math.min(
+    100,
+    Math.round((supportCircle.collectiveSavings / supportCircle.collectiveTarget) * 100)
+  );
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMsg.trim()) return;
+    addSupportCircleMessage(newMsg.trim());
+    setNewMsg('');
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      {/* Circle Banner */}
+      <div className="bg-[#281C16] text-[#FAF7F2] p-6 sm:p-8 rounded-3xl mb-8 border border-[#E8DFC8]/40 shadow-md">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-bold uppercase tracking-wider bg-[#FAF1E4] text-[#9C4221] px-3 py-0.5 rounded-full">
+                Peer Support Circle
+              </span>
+              <span className="text-xs text-[#D9CAB6]">Due: {supportCircle.dueMonth}</span>
+            </div>
+            <h1 className="font-serif text-3xl font-bold">{supportCircle.name}</h1>
+            <p className="text-xs text-[#D9CAB6] mt-1 max-w-xl">
+              Mothers preparing together across Kumasi and Ashanti. Collective strength, shared accountability, and zero shame.
+            </p>
+          </div>
+
+          <div className="bg-[#3D291F] p-4 rounded-2xl border border-[#FAF1E4]/10 min-w-[240px]">
+            <div className="text-xs text-[#D9CAB6]">Collective Preparedness Fund</div>
+            <div className="text-2xl font-serif font-bold text-[#E8824A] my-1">
+              GH₵{supportCircle.collectiveSavings}
+            </div>
+            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mt-2">
+              <div
+                className="h-full bg-gradient-to-r from-[#2D6A4F] to-[#52B788] rounded-full"
+                style={{ width: `${collectiveProgress}%` }}
+              ></div>
+            </div>
+            <div className="text-[10px] text-[#A8988B] mt-1.5 flex justify-between">
+              <span>Goal: GH₵{supportCircle.collectiveTarget}</span>
+              <span>{collectiveProgress}% Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Members Column */}
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-3xl border border-[#E8DFC8] shadow-xs">
+            <h3 className="font-serif text-lg font-bold text-[#281C16] mb-4 flex items-center justify-between">
+              <span>Circle Members (4)</span>
+              <span className="text-xs font-sans text-[#7A695C] bg-[#FAF7F2] px-2 py-0.5 rounded-full">
+                Kumasi Hub
+              </span>
+            </h3>
+
+            <div className="space-y-3">
+              {supportCircle.members.map((member) => (
+                <div
+                  key={member.id}
+                  className={`p-3.5 rounded-2xl border flex items-center justify-between ${
+                    member.isDemoUser
+                      ? 'bg-[#FAF1E4] border-[#E8824A]'
+                      : 'bg-[#FAF7F2] border-[#E8DFC8]'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs ${
+                        member.isDemoUser
+                          ? 'bg-[#9C4221] text-white'
+                          : 'bg-[#FAF7F2] text-[#5C4A3E] border border-[#E8DFC8]'
+                      }`}
+                    >
+                      {member.name.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-[#281C16] flex items-center gap-1.5">
+                        <span>{member.name}</span>
+                        {member.isDemoUser && (
+                          <span className="text-[9px] font-bold text-[#9C4221] uppercase">You</span>
+                        )}
+                      </div>
+                      <div className="text-[11px] text-[#7A695C]">
+                        {member.location} • Month {member.pregnancyMonth}
+                      </div>
+                    </div>
+                  </div>
+
+                  {member.weeklyTargetReached ? (
+                    <span className="text-[10px] font-bold text-[#2D6A4F] bg-[#EAF5EF] px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Target Met
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-[#7A695C] bg-white px-2 py-0.5 rounded-full border border-[#E8DFC8]">
+                      Preparing
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-5 rounded-3xl bg-[#FAF1E4] border border-[#E8DFC8] text-xs text-[#5C4A3E]">
+            <div className="flex items-center gap-2 font-bold text-[#9C4221] mb-1">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Dignity &amp; Privacy First</span>
+            </div>
+            <p>
+              Private health records, medical issues, and exact personal savings balances are never broadcast to circle members. Only general milestones and collective encouragement are shared.
+            </p>
+          </div>
+        </div>
+
+        {/* Message Wall Column */}
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-[#E8DFC8] shadow-xs flex flex-col h-[560px]">
+          <div className="p-5 border-b border-[#E8DFC8] flex items-center justify-between">
+            <div>
+              <h3 className="font-serif text-lg font-bold text-[#281C16]">Circle Encouragement Wall</h3>
+              <p className="text-xs text-[#7A695C]">Safe sisterhood, peer support &amp; weekly motivation</p>
+            </div>
+            <Heart className="w-5 h-5 text-[#E8824A]" />
+          </div>
+
+          {/* Messages Feed */}
+          <div className="flex-1 p-5 overflow-y-auto space-y-3.5">
+            {supportCircle.messages.map((msg) => (
+              <div
+                key={msg.id}
+                className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E8DFC8] text-sm"
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-bold text-xs text-[#9C4221]">{msg.senderName}</span>
+                  <span className="text-[10px] text-[#7A695C]">{msg.timestamp}</span>
+                </div>
+                <p className="text-xs text-[#281C16] leading-relaxed">{msg.text}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Post Message Form */}
+          <div className="p-4 border-t border-[#E8DFC8] bg-[#FAF7F2]/60">
+            <form onSubmit={handleSend} className="flex items-center gap-2">
+              <input
+                type="text"
+                value={newMsg}
+                onChange={(e) => setNewMsg(e.target.value)}
+                placeholder="Share encouragement or celebrate reaching your target..."
+                className="flex-1 p-3 rounded-xl bg-white border border-[#E8DFC8] text-xs text-[#281C16] focus:outline-none focus:border-[#E8824A]"
+              />
+              <button
+                type="submit"
+                disabled={!newMsg.trim()}
+                className="px-4 py-3 rounded-xl bg-[#281C16] hover:bg-[#3D291F] disabled:opacity-50 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs"
+              >
+                <span>Send</span>
+                <Send className="w-3.5 h-3.5 text-[#E8824A]" />
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
