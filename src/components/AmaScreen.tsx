@@ -11,7 +11,7 @@ interface ChatMessage {
 }
 
 export const AmaScreen: React.FC = () => {
-  const { user } = useApp();
+  const { user, openHospitalLocator } = useApp();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
@@ -87,16 +87,16 @@ export const AmaScreen: React.FC = () => {
   ];
 
   return (
-    <div id="ama-chat-screen" className="flex-1 flex flex-col h-[calc(100vh-4rem)] max-w-md mx-auto w-full bg-[#FAF7F2]">
+    <div id="ama-chat-screen" className="flex-1 flex flex-col h-[calc(100vh-4rem)] max-w-md mx-auto w-full bg-[#FAF8F8]">
       {/* Top Bar */}
-      <div className="bg-white px-4 py-3 border-b border-[#E8DFC8] flex items-center gap-3">
-        <div className="w-10 h-10 rounded-2xl bg-[#E8824A] flex items-center justify-center text-white shadow-xs">
+      <div className="bg-white px-4 py-3 border-b border-[#F0EBE9] flex items-center gap-3">
+        <div className="w-10 h-10 rounded-2xl bg-[#E61964] flex items-center justify-center text-white shadow-xs">
           <Sparkles className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="font-serif font-bold text-base text-[#281C16]">Ama</h2>
-          <p className="text-[11px] text-[#1E5E3A] font-medium flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          <h2 className="font-serif font-bold text-base text-[#1E232B]">Ama</h2>
+          <p className="text-[11px] text-[#2E7D46] font-medium flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#2E7D46] animate-pulse" />
             <span>Maternal Companion • Online</span>
           </p>
         </div>
@@ -111,7 +111,7 @@ export const AmaScreen: React.FC = () => {
           >
             <div
               className={`w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0 ${
-                msg.sender === 'user' ? 'bg-[#9C4221] text-white' : 'bg-[#FAF1E4] text-[#9C4221] border border-[#E8DFC8]'
+                msg.sender === 'user' ? 'bg-[#1E232B] text-white' : 'bg-[#FDF2F5] text-[#E61964] border border-[#F8B4C8]'
               }`}
             >
               {msg.sender === 'user' ? <UserIcon className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
@@ -120,14 +120,14 @@ export const AmaScreen: React.FC = () => {
             <div
               className={`max-w-[82%] rounded-2xl px-4 py-3 text-xs sm:text-sm leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-[#9C4221] text-white rounded-tr-xs shadow-xs'
-                  : 'bg-white text-[#281C16] border border-[#E8DFC8] rounded-tl-xs shadow-xs'
+                  ? 'bg-[#E61964] text-white rounded-tr-xs shadow-xs'
+                  : 'bg-white text-[#1E232B] border border-[#F0EBE9] rounded-tl-xs shadow-xs'
               }`}
             >
               <div className="whitespace-pre-line">{msg.text}</div>
               <div
                 className={`text-[9px] mt-1 text-right ${
-                  msg.sender === 'user' ? 'text-white/75' : 'text-[#8C7A6D]'
+                  msg.sender === 'user' ? 'text-white/75' : 'text-[#64748B]'
                 }`}
               >
                 {msg.time}
@@ -137,8 +137,8 @@ export const AmaScreen: React.FC = () => {
         ))}
 
         {isLoading && (
-          <div className="flex items-center gap-2 text-xs text-[#8C7A6D] bg-white p-3 rounded-2xl border border-[#E8DFC8] w-fit">
-            <Sparkles className="w-3.5 h-3.5 text-[#E8824A] animate-spin" />
+          <div className="flex items-center gap-2 text-xs text-[#64748B] bg-white p-3 rounded-2xl border border-[#F0EBE9] w-fit">
+            <Sparkles className="w-3.5 h-3.5 text-[#E61964] animate-spin" />
             <span>Ama is thinking...</span>
           </div>
         )}
@@ -149,11 +149,17 @@ export const AmaScreen: React.FC = () => {
       {/* Suggested Quick Questions */}
       {messages.length < 3 && (
         <div className="px-4 pb-2 flex gap-1.5 overflow-x-auto no-scrollbar">
+          <button
+            onClick={openHospitalLocator}
+            className="text-[11px] bg-[#FDF2F5] border border-[#F8B4C8] px-3 py-1.5 rounded-full text-[#E61964] font-bold whitespace-nowrap hover:bg-[#FCE7F0] transition-colors cursor-pointer shrink-0"
+          >
+            🏥 Find Hospital Near Me
+          </button>
           {sampleQuestions.map((q, idx) => (
             <button
               key={idx}
               onClick={() => handleSend(q)}
-              className="text-[11px] bg-white border border-[#E8DFC8] px-3 py-1.5 rounded-full text-[#5C4A3E] whitespace-nowrap hover:bg-[#FAF1E4] transition-colors cursor-pointer shrink-0"
+              className="text-[11px] bg-white border border-[#F0EBE9] px-3 py-1.5 rounded-full text-[#1E232B] whitespace-nowrap hover:bg-[#FAF8F8] transition-colors cursor-pointer shrink-0"
             >
               {q}
             </button>
@@ -162,12 +168,12 @@ export const AmaScreen: React.FC = () => {
       )}
 
       {/* Medical Mini-Disclaimer */}
-      <div className="px-4 py-1 text-[10px] text-[#8C7A6D] text-center bg-[#FAF1E4]/50 border-t border-[#E8DFC8]/50">
+      <div className="px-4 py-1 text-[10px] text-[#64748B] text-center bg-white/70 border-t border-[#F0EBE9]">
         Ama provides health planning, not medical diagnosis. In an emergency, visit Suntreso Hospital immediately.
       </div>
 
       {/* Input Bar */}
-      <div className="p-3 bg-white border-t border-[#E8DFC8]">
+      <div className="p-3 bg-white border-t border-[#F0EBE9]">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -180,12 +186,12 @@ export const AmaScreen: React.FC = () => {
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Ask Ama about delivery, savings, or health..."
-            className="flex-1 bg-[#FAF7F2] border border-[#E8DFC8] rounded-2xl px-4 py-3 text-xs sm:text-sm text-[#281C16] outline-none focus:border-[#E8824A] focus:bg-white transition-all"
+            className="flex-1 bg-[#FAF8F8] border border-[#F0EBE9] rounded-2xl px-4 py-3 text-xs sm:text-sm text-[#1E232B] outline-none focus:border-[#E61964] focus:bg-white transition-all"
           />
           <button
             type="submit"
             disabled={!inputMessage.trim() || isLoading}
-            className="w-10 h-10 rounded-2xl bg-[#9C4221] hover:bg-[#853416] disabled:opacity-40 text-white flex items-center justify-center shrink-0 transition-colors shadow-xs cursor-pointer"
+            className="w-10 h-10 rounded-2xl bg-[#E61964] hover:bg-[#D01255] disabled:opacity-40 text-white flex items-center justify-center shrink-0 transition-colors shadow-xs cursor-pointer"
           >
             <Send className="w-4 h-4" />
           </button>

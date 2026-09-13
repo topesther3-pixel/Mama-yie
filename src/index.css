@@ -2,6 +2,23 @@
 
 @layer base {
   :root {
+    --brand-pink: #E61964;
+    --brand-pink-hover: #D01255;
+    --brand-pink-soft: #FDF2F5;
+    --brand-pink-border: #F8B4C8;
+    --brand-pink-text: #BE123C;
+
+    --brand-green: #2E7D46;
+    --brand-green-hover: #256637;
+    --brand-green-soft: #EDF7EE;
+    --brand-green-border: #BAE3C2;
+    --brand-green-text: #1C592E;
+
+    --brand-charcoal: #1E232B;
+    --brand-charcoal-muted: #64748B;
+    --brand-bg: #FAF8F8;
+    --brand-border: #F0EBE9;
+
     --font-serif: 'DM Serif Display', Georgia, serif;
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     --font-mono: 'Space Mono', monospace;
@@ -9,8 +26,8 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: #FAF7F2;
-    color: #281C16;
+    background-color: #FAF8F8;
+    color: #1E232B;
   }
 
   .font-serif {
@@ -28,12 +45,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF7F2;
+  background: #FAF8F8;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E8DFC8;
+  background: #F8B4C8;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #D9CAB6;
+  background: #E61964;
 }

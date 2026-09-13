@@ -85,15 +85,15 @@ export const EarnScreen: React.FC = () => {
           {/* Header */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#9C4221] bg-[#FAF1E4] px-2.5 py-0.5 rounded-full border border-[#E8DFC8]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#BE123C] bg-[#FDF2F5] px-2.5 py-0.5 rounded-full border border-[#F8B4C8]">
                 DEMO EARN &amp; SAVE
               </span>
-              <span className="text-[10px] font-medium text-[#7A695C]">Prototype</span>
+              <span className="text-[10px] font-medium text-[#64748B]">Prototype</span>
             </div>
-            <h1 className="font-serif font-bold text-2xl sm:text-3xl text-[#281C16] leading-tight">
+            <h1 className="font-serif font-bold text-2xl sm:text-3xl text-[#1E232B] leading-tight">
               Earn while you prepare for motherhood.
             </h1>
-            <p className="text-xs sm:text-sm text-[#7A695C] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
               Discover selected local Ghanaian partner businesses, share products through your referral link, and earn demo commissions added straight into your Mama Yie Motherhood Fund.
             </p>
           </div>
@@ -101,48 +101,48 @@ export const EarnScreen: React.FC = () => {
           {/* Motherhood Fund Progress Summary Pill */}
           <div
             onClick={() => setCurrentView('home')}
-            className="bg-white rounded-2xl p-4 border border-[#E8DFC8] flex items-center justify-between cursor-pointer hover:border-[#1E5E3A]/40 transition-colors shadow-xs"
+            className="bg-white rounded-2xl p-4 border border-[#F0EBE9] flex items-center justify-between cursor-pointer hover:border-[#BAE3C2] transition-colors shadow-xs"
           >
             <div>
-              <span className="text-[10px] uppercase font-bold text-[#8C7A6D] tracking-wider block">
+              <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider block">
                 Your Motherhood Fund Balance
               </span>
-              <div className="font-serif font-bold text-xl text-[#1E5E3A] mt-0.5">
+              <div className="font-serif font-bold text-xl text-[#2E7D46] mt-0.5">
                 GH₵{user.currentSavings}{' '}
-                <span className="text-xs font-normal text-[#8C7A6D]">/ GH₵{user.targetPreparationAmount}</span>
+                <span className="text-xs font-normal text-[#64748B]">/ GH₵{user.targetPreparationAmount}</span>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-xs font-bold text-[#9C4221]">
+            <div className="flex items-center gap-1 text-xs font-bold text-[#E61964]">
               <span>View Fund</span>
               <ArrowRight className="w-4 h-4" />
             </div>
           </div>
 
           {/* Referral Code Bar */}
-          <div className="bg-[#FAF1E4] rounded-2xl p-3.5 border border-[#E8DFC8] flex items-center justify-between">
+          <div className="bg-[#FDF2F5] rounded-2xl p-3.5 border border-[#F8B4C8] flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-semibold text-[#8C7A6D] uppercase tracking-wider block">
+              <span className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider block">
                 Your Referral Code
               </span>
-              <span className="font-mono font-bold text-base text-[#281C16]">
+              <span className="font-mono font-bold text-base text-[#1E232B]">
                 {user.referralCode}
               </span>
             </div>
             <button
               onClick={handleCopyCode}
-              className="px-3 py-1.5 rounded-xl bg-white border border-[#E8DFC8] text-xs font-semibold text-[#9C4221] hover:bg-[#FAF7F2] transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+              className="px-3 py-1.5 rounded-xl bg-white border border-[#F8B4C8] text-xs font-semibold text-[#E61964] hover:bg-[#FDF2F5] transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
             >
-              {copiedCode ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedCode ? <Check className="w-3.5 h-3.5 text-[#2E7D46]" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copiedCode ? 'Copied' : 'Copy'}</span>
             </button>
           </div>
 
           {/* Partner Businesses Heading */}
           <div className="flex items-center justify-between pt-1">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#8C7A6D]">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
               Local Demo Partners
             </h2>
-            <span className="text-[11px] text-[#7A695C]">
+            <span className="text-[11px] text-[#64748B]">
               {partners.length} businesses
             </span>
           </div>
@@ -157,18 +157,18 @@ export const EarnScreen: React.FC = () => {
                 <div
                   key={partner.id}
                   id={`partner-card-${partner.id}`}
-                  className="bg-white rounded-3xl p-5 border-2 border-[#E8DFC8] shadow-sm flex flex-col gap-3.5 hover:border-[#D9CAB6] transition-all"
+                  className="bg-white rounded-3xl p-5 border-2 border-[#F0EBE9] shadow-xs flex flex-col gap-3.5 hover:border-[#BAE3C2] transition-all"
                 >
                   {/* Card Top: DEMO PARTNER Badge & External Link */}
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#9C4221] bg-[#FAF1E4] px-2.5 py-0.5 rounded-full border border-[#E8DFC8]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#BE123C] bg-[#FDF2F5] px-2.5 py-0.5 rounded-full border border-[#F8B4C8]">
                       DEMO PARTNER
                     </span>
                     <a
                       href={partner.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[11px] font-medium text-[#7A695C] hover:text-[#9C4221] flex items-center gap-1 transition-colors"
+                      className="text-[11px] font-medium text-[#64748B] hover:text-[#E61964] flex items-center gap-1 transition-colors"
                       title="Visit official shop website"
                     >
                       <span>Visit Shop</span>
@@ -178,20 +178,20 @@ export const EarnScreen: React.FC = () => {
 
                   {/* Partner Identity */}
                   <div>
-                    <h3 className="font-serif font-bold text-xl text-[#281C16]">
+                    <h3 className="font-serif font-bold text-xl text-[#1E232B]">
                       {partner.name}
                     </h3>
-                    <p className="text-xs font-semibold text-[#1E5E3A] mt-0.5">
+                    <p className="text-xs font-semibold text-[#2E7D46] mt-0.5">
                       {partner.category || 'Local Ghanaian business'}
                     </p>
-                    <p className="text-xs text-[#7A695C] leading-relaxed mt-1.5">
+                    <p className="text-xs text-[#64748B] leading-relaxed mt-1.5">
                       {partner.description}
                     </p>
                   </div>
 
                   {/* Products Peek */}
-                  <div className="text-[11px] font-medium text-[#8C7A6D] flex items-center gap-1.5">
-                    <ShoppingBag className="w-3.5 h-3.5 text-[#9C4221]" />
+                  <div className="text-[11px] font-medium text-[#64748B] flex items-center gap-1.5">
+                    <ShoppingBag className="w-3.5 h-3.5 text-[#E61964]" />
                     <span>Explore {productCount} products</span>
                   </div>
 
@@ -200,10 +200,10 @@ export const EarnScreen: React.FC = () => {
                     <button
                       id={`view-products-btn-${partner.id}`}
                       onClick={() => setSelectedPartnerId(partner.id)}
-                      className="py-3 px-3 rounded-2xl bg-white hover:bg-[#FAF1E4] border-2 border-[#E8DFC8] text-[#281C16] font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      className="py-3 px-3 rounded-2xl bg-white hover:bg-[#FAF8F8] border-2 border-[#F0EBE9] text-[#1E232B] font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                     >
                       <span>View Products</span>
-                      <ArrowRight className="w-3.5 h-3.5 text-[#9C4221]" />
+                      <ArrowRight className="w-3.5 h-3.5 text-[#E61964]" />
                     </button>
 
                     <button
@@ -214,7 +214,7 @@ export const EarnScreen: React.FC = () => {
                           handleOpenShare(firstProduct);
                         }
                       }}
-                      className="py-3 px-3 rounded-2xl bg-[#9C4221] hover:bg-[#853416] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                      className="py-3 px-3 rounded-2xl bg-[#E61964] hover:bg-[#D01255] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <Share2 className="w-3.5 h-3.5" />
                       <span>Share &amp; Earn</span>
@@ -226,8 +226,8 @@ export const EarnScreen: React.FC = () => {
           </div>
 
           {/* Prototype Disclosure Notice */}
-          <div className="bg-[#FAF7F2] rounded-2xl p-3.5 border border-[#E8DFC8] text-[11px] text-[#7A695C] leading-relaxed space-y-1">
-            <span className="font-bold text-[#281C16] block">Important Prototype Disclosure</span>
+          <div className="bg-white rounded-2xl p-3.5 border border-[#F0EBE9] text-[11px] text-[#64748B] leading-relaxed space-y-1">
+            <span className="font-bold text-[#1E232B] block">Important Prototype Disclosure</span>
             <p>
               These businesses are featured as <strong>Demo Partners</strong> for the Mama Yie hackathon prototype. Mama Yie does not claim a signed commercial contract, and transactions are simulated for demonstration.
             </p>
@@ -239,23 +239,23 @@ export const EarnScreen: React.FC = () => {
           {/* Back Navigation Bar */}
           <button
             onClick={() => setSelectedPartnerId(null)}
-            className="inline-flex items-center gap-2 text-xs font-bold text-[#9C4221] hover:text-[#853416] py-1 cursor-pointer transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#E61964] hover:text-[#D01255] py-1 cursor-pointer transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to All Partners</span>
           </button>
 
           {/* Partner Profile Header Card */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-[#E8DFC8] shadow-sm space-y-3">
+          <div className="bg-white rounded-3xl p-5 border-2 border-[#F0EBE9] shadow-xs space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#9C4221] bg-[#FAF1E4] px-2.5 py-0.5 rounded-full border border-[#E8DFC8]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#BE123C] bg-[#FDF2F5] px-2.5 py-0.5 rounded-full border border-[#F8B4C8]">
                 DEMO PARTNER
               </span>
               <a
                 href={selectedPartner.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] font-medium text-[#7A695C] hover:text-[#9C4221] flex items-center gap-1 transition-colors"
+                className="text-[11px] font-medium text-[#64748B] hover:text-[#E61964] flex items-center gap-1 transition-colors"
               >
                 <span>Visit Store</span>
                 <ExternalLink className="w-3 h-3" />
@@ -263,18 +263,18 @@ export const EarnScreen: React.FC = () => {
             </div>
 
             <div>
-              <h1 className="font-serif font-bold text-2xl text-[#281C16]">
+              <h1 className="font-serif font-bold text-2xl text-[#1E232B]">
                 {selectedPartner.name}
               </h1>
-              <p className="text-xs font-semibold text-[#1E5E3A] mt-0.5">
+              <p className="text-xs font-semibold text-[#2E7D46] mt-0.5">
                 {selectedPartner.category}
               </p>
-              <p className="text-xs text-[#7A695C] leading-relaxed mt-2">
+              <p className="text-xs text-[#64748B] leading-relaxed mt-2">
                 {selectedPartner.description}
               </p>
             </div>
 
-            <div className="pt-2 border-t border-[#E8DFC8]/60 flex items-center justify-between text-xs text-[#7A695C]">
+            <div className="pt-2 border-t border-[#F0EBE9] flex items-center justify-between text-xs text-[#64748B]">
               <span>Products available: <strong>{selectedPartner.products?.length || 0}</strong></span>
               <span>Commission: <strong>GH₵4 – GH₵7 per sale</strong></span>
             </div>
@@ -283,14 +283,14 @@ export const EarnScreen: React.FC = () => {
           {/* Section: Select a product to share */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[#8C7A6D]">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
                 Select a product to share &amp; earn
               </h2>
-              <span className="text-[11px] text-[#7A695C]">
+              <span className="text-[11px] text-[#64748B]">
                 {selectedPartner.products?.length || 0} items
               </span>
             </div>
-            <p className="text-xs text-[#7A695C]">
+            <p className="text-xs text-[#64748B]">
               Share via WhatsApp or copy your link. Tapping <em>Simulate Purchase</em> instantly credits your fund.
             </p>
           </div>
@@ -301,14 +301,14 @@ export const EarnScreen: React.FC = () => {
               <div
                 key={product.id}
                 id={`product-card-${product.id}`}
-                className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-[#E8DFC8] shadow-sm flex flex-col gap-3.5"
+                className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-[#F0EBE9] shadow-xs flex flex-col gap-3.5"
               >
                 {/* Top Badge Row */}
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#7A695C] bg-[#FAF7F2] px-2 py-0.5 rounded-md border border-[#E8DFC8]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] bg-[#FAF8F8] px-2 py-0.5 rounded-md border border-[#F0EBE9]">
                     {product.category ? product.category.replace('_', ' ') : 'Botanical'}
                   </span>
-                  <span className="text-xs font-bold text-[#1E5E3A] bg-[#E8F5E9] px-2.5 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-[#1C592E] bg-[#EDF7EE] border border-[#BAE3C2] px-2.5 py-0.5 rounded-full">
                     Earn GH₵{product.demoCommission}
                   </span>
                 </div>
@@ -318,21 +318,21 @@ export const EarnScreen: React.FC = () => {
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl border border-[#E8DFC8] shrink-0 bg-[#FAF7F2]"
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl border border-[#F0EBE9] shrink-0 bg-[#FAF8F8]"
                     loading="lazy"
                   />
                   <div className="flex-1 min-w-0 space-y-1">
-                    <h3 className="font-serif font-bold text-base text-[#281C16] leading-snug">
+                    <h3 className="font-serif font-bold text-base text-[#1E232B] leading-snug">
                       {product.name}
                     </h3>
-                    <p className="text-[11px] text-[#7A695C] line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-[#64748B] line-clamp-2 leading-relaxed">
                       {product.description}
                     </p>
                     <div className="flex items-baseline gap-2 pt-0.5">
-                      <span className="font-bold text-base sm:text-lg text-[#281C16]">
+                      <span className="font-bold text-base sm:text-lg text-[#1E232B]">
                         GH₵{product.price || product.retailPrice}
                       </span>
-                      <span className="text-[11px] text-[#8C7A6D]">retail price</span>
+                      <span className="text-[11px] text-[#64748B]">retail price</span>
                     </div>
                   </div>
                 </div>
@@ -342,7 +342,7 @@ export const EarnScreen: React.FC = () => {
                   <button
                     id={`share-btn-${product.id}`}
                     onClick={() => handleOpenShare(product)}
-                    className="py-3 px-3 rounded-2xl bg-[#9C4221] hover:bg-[#853416] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                    className="py-3 px-3 rounded-2xl bg-[#E61964] hover:bg-[#D01255] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                   >
                     <Share2 className="w-3.5 h-3.5" />
                     <span>Share &amp; Earn</span>
@@ -352,7 +352,7 @@ export const EarnScreen: React.FC = () => {
                     id={`simulate-purchase-card-btn-${product.id}`}
                     onClick={() => handleSimulatePurchase(product, selectedPartner.name)}
                     disabled={simulatingId === product.id}
-                    className="py-3 px-3 rounded-2xl bg-[#1E5E3A] hover:bg-[#16482C] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                    className="py-3 px-3 rounded-2xl bg-[#2E7D46] hover:bg-[#256637] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
                     <span>Simulate (+GH₵{product.demoCommission})</span>
@@ -372,21 +372,21 @@ export const EarnScreen: React.FC = () => {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 50, opacity: 0 }}
-              className="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full border-2 border-[#E8DFC8] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full border-2 border-[#F0EBE9] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-[#E8DFC8]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#F0EBE9]">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#9C4221] bg-[#FAF1E4] px-2 py-0.5 rounded-full border border-[#E8DFC8]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#BE123C] bg-[#FDF2F5] px-2 py-0.5 rounded-full border border-[#F8B4C8]">
                     DEMO PARTNER
                   </span>
-                  <h3 className="font-serif font-bold text-base text-[#281C16]">
+                  <h3 className="font-serif font-bold text-base text-[#1E232B]">
                     Share Product
                   </h3>
                 </div>
                 <button
                   onClick={() => setActiveProduct(null)}
-                  className="p-1 rounded-lg text-[#8C7A6D] hover:text-[#281C16] cursor-pointer"
+                  className="p-1 rounded-lg text-[#64748B] hover:text-[#1E232B] cursor-pointer"
                   aria-label="Close"
                 >
                   <X className="w-5 h-5" />
@@ -394,23 +394,23 @@ export const EarnScreen: React.FC = () => {
               </div>
 
               {/* Product Card Summary */}
-              <div className="flex gap-3 items-center bg-[#FAF7F2] p-3 rounded-2xl border border-[#E8DFC8]">
+              <div className="flex gap-3 items-center bg-[#FAF8F8] p-3 rounded-2xl border border-[#F0EBE9]">
                 <img
                   src={activeProduct.image}
                   alt={activeProduct.name}
-                  className="w-16 h-16 object-cover rounded-xl border border-[#E8DFC8] shrink-0"
+                  className="w-16 h-16 object-cover rounded-xl border border-[#F0EBE9] shrink-0"
                 />
                 <div className="min-w-0 space-y-0.5">
-                  <span className="text-[10px] uppercase font-bold text-[#8C7A6D] block">
+                  <span className="text-[10px] uppercase font-bold text-[#64748B] block">
                     {selectedPartner?.name || 'Partner Business'}
                   </span>
-                  <p className="font-semibold text-xs text-[#281C16] line-clamp-1">
+                  <p className="font-semibold text-xs text-[#1E232B] line-clamp-1">
                     {activeProduct.name}
                   </p>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="font-bold text-[#281C16]">GH₵{activeProduct.price || activeProduct.retailPrice}</span>
+                    <span className="font-bold text-[#1E232B]">GH₵{activeProduct.price || activeProduct.retailPrice}</span>
                     <span>•</span>
-                    <span className="font-bold text-[#1E5E3A]">
+                    <span className="font-bold text-[#2E7D46]">
                       Earn GH₵{activeProduct.demoCommission}
                     </span>
                   </div>
@@ -419,16 +419,16 @@ export const EarnScreen: React.FC = () => {
 
               {/* Share This Product Section */}
               <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#8C7A6D] block">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#64748B] block">
                   Share this product
                 </span>
 
                 {/* Simulated Referral Link Display */}
-                <div className="bg-[#FAF1E4] rounded-2xl p-3 border border-[#E8DFC8] space-y-1">
-                  <span className="text-[10px] font-semibold text-[#8C7A6D] block">
+                <div className="bg-[#FDF2F5] rounded-2xl p-3 border border-[#F8B4C8] space-y-1">
+                  <span className="text-[10px] font-semibold text-[#64748B] block">
                     Simulated Referral Link
                   </span>
-                  <div className="font-mono text-xs text-[#9C4221] break-all select-all font-semibold">
+                  <div className="font-mono text-xs text-[#BE123C] break-all select-all font-semibold">
                     {getReferralUrl(activeProduct.id)}
                   </div>
                 </div>
@@ -447,21 +447,21 @@ export const EarnScreen: React.FC = () => {
                   <button
                     id="copy-referral-link-btn"
                     onClick={() => handleCopyLink(activeProduct.id)}
-                    className="py-3 px-3 rounded-xl bg-white border border-[#E8DFC8] text-[#281C16] hover:bg-[#FAF7F2] font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                    className="py-3 px-3 rounded-xl bg-white border border-[#F0EBE9] text-[#1E232B] hover:bg-[#FAF8F8] font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                   >
-                    {copiedLink ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4 text-[#9C4221]" />}
+                    {copiedLink ? <Check className="w-4 h-4 text-[#2E7D46]" /> : <Copy className="w-4 h-4 text-[#E61964]" />}
                     <span>{copiedLink ? 'Copied!' : 'Copy Link'}</span>
                   </button>
                 </div>
               </div>
 
               {/* Simulated Purchase Section */}
-              <div className="bg-[#FAF7F2] rounded-2xl p-4 border border-[#E8DFC8] space-y-3 pt-3">
+              <div className="bg-[#FAF8F8] rounded-2xl p-4 border border-[#F0EBE9] space-y-3 pt-3">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#1E5E3A] block">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#2E7D46] block">
                     Prototype Test Action
                   </span>
-                  <p className="text-xs text-[#5C4A3E] leading-relaxed">
+                  <p className="text-xs text-[#64748B] leading-relaxed">
                     This is a demo transaction for the Mama Yie prototype. Simulating a purchase instantly records a commission in your Motherhood Fund.
                   </p>
                 </div>
@@ -470,7 +470,7 @@ export const EarnScreen: React.FC = () => {
                   id="simulate-demo-purchase-modal-btn"
                   onClick={() => handleSimulatePurchase(activeProduct, selectedPartner?.name)}
                   disabled={simulatingId === activeProduct.id}
-                  className="w-full py-3.5 rounded-2xl bg-[#1E5E3A] hover:bg-[#16482C] active:scale-[0.99] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+                  className="w-full py-3.5 rounded-2xl bg-[#2E7D46] hover:bg-[#256637] active:scale-[0.99] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
                 >
                   <Sparkles className="w-4 h-4 text-yellow-300" />
                   <span>

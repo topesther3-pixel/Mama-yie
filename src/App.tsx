@@ -89,22 +89,22 @@ const JudgeTourBar: React.FC = () => {
 
   return (
     <aside aria-label="Hackathon Judge Demo Tour" className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
-      <motion.div
+        <motion.div
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -30, opacity: 0 }}
-        className="bg-[#281C16] text-[#FAF7F2] rounded-2xl p-4 shadow-2xl border-2 border-[#E8824A] flex items-center justify-between gap-3"
+        className="bg-[#1E232B] text-[#FAF8F8] rounded-2xl p-4 shadow-2xl border-2 border-[#E61964] flex items-center justify-between gap-3"
       >
         <div className="flex-1 min-w-0 text-left">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#E8824A] text-white">
+            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#E61964] text-white">
               Judge Tour • {tourStep}/{totalSteps}
             </span>
-            <span className="text-xs font-bold text-[#E8DFC8] truncate">
+            <span className="text-xs font-bold text-white truncate">
               {currentStepInfo.title}
             </span>
           </div>
-          <p className="text-[11px] text-[#D9CAB6] line-clamp-1">
+          <p className="text-[11px] text-[#94A3B8] line-clamp-1">
             {currentStepInfo.description}
           </p>
         </div>
@@ -113,7 +113,7 @@ const JudgeTourBar: React.FC = () => {
           <button
             onClick={handlePrev}
             disabled={tourStep <= 1}
-            className="p-1.5 rounded-lg bg-[#3D291F] hover:bg-[#4E3528] disabled:opacity-30 text-white cursor-pointer"
+            className="p-1.5 rounded-lg bg-[#2D3748] hover:bg-[#3E4C5F] disabled:opacity-30 text-white cursor-pointer"
             title="Previous"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -121,7 +121,7 @@ const JudgeTourBar: React.FC = () => {
 
           <button
             onClick={handleNext}
-            className="py-1.5 px-3 rounded-lg bg-[#E8824A] hover:bg-[#D46E35] text-white font-bold text-xs flex items-center gap-1 cursor-pointer"
+            className="py-1.5 px-3 rounded-lg bg-[#E61964] hover:bg-[#D01255] text-white font-bold text-xs flex items-center gap-1 cursor-pointer"
           >
             {tourStep < totalSteps ? (
               <>
@@ -138,7 +138,7 @@ const JudgeTourBar: React.FC = () => {
 
           <button
             onClick={endTour}
-            className="p-1.5 rounded-lg text-[#D9CAB6] hover:text-white cursor-pointer"
+            className="p-1.5 rounded-lg text-[#94A3B8] hover:text-white cursor-pointer"
             title="Exit"
           >
             <X className="w-4 h-4" />
@@ -155,7 +155,7 @@ const AppContent: React.FC = () => {
   // 1. Phone Login View
   if (currentView === 'login') {
     return (
-      <div className="min-h-screen bg-[#FAF7F2]">
+      <div className="min-h-screen bg-[#FAF8F8]">
         <JudgeTourBar />
         <PhoneLogin />
       </div>
@@ -165,7 +165,7 @@ const AppContent: React.FC = () => {
   // 2. OTP Verification View
   if (currentView === 'otp') {
     return (
-      <div className="min-h-screen bg-[#FAF7F2]">
+      <div className="min-h-screen bg-[#FAF8F8]">
         <JudgeTourBar />
         <OtpVerify />
       </div>
@@ -175,7 +175,7 @@ const AppContent: React.FC = () => {
   // 3. Ama Onboarding View
   if (currentView === 'onboarding') {
     return (
-      <div className="min-h-screen bg-[#FAF7F2]">
+      <div className="min-h-screen bg-[#FAF8F8]">
         <JudgeTourBar />
         <AmaOnboarding />
       </div>
@@ -199,9 +199,9 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] flex flex-col justify-between antialiased selection:bg-[#FAF1E4] selection:text-[#9C4221]">
+    <div className="min-h-screen bg-[#FAF8F8] flex flex-col justify-between antialiased selection:bg-[#FDF2F5] selection:text-[#BE123C]">
       {/* Centered Mobile App Container */}
-      <div className="w-full max-w-md mx-auto min-h-screen bg-[#FAF7F2] flex flex-col relative">
+      <div className="w-full max-w-md mx-auto min-h-screen bg-[#FAF8F8] flex flex-col relative">
         {/* Floating Judge Tour Controller if active */}
         <JudgeTourBar />
 

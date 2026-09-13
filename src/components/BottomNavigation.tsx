@@ -16,7 +16,7 @@ export const BottomNavigation: React.FC = () => {
     <nav
       id="bottom-navigation-bar"
       aria-label="Main Navigation"
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E8DFC8] shadow-lg"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0EBE9] shadow-lg"
     >
       <div className="max-w-md mx-auto px-4 h-16 flex items-center justify-around">
         {navItems.map((item) => {
@@ -28,16 +28,16 @@ export const BottomNavigation: React.FC = () => {
               id={`nav-tab-${item.id}`}
               onClick={() => setCurrentView(item.id)}
               className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors cursor-pointer ${
-                isActive ? 'text-[#9C4221]' : 'text-[#8C7A6D] hover:text-[#281C16]'
+                isActive ? 'text-[#E61964]' : 'text-[#64748B] hover:text-[#1E232B]'
               }`}
             >
               <div className="relative">
                 <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-2'}`} />
                 {isActive && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#9C4221] rounded-full" />
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#E61964] rounded-full" />
                 )}
               </div>
-              <span className={`text-[11px] mt-1 whitespace-nowrap ${isActive ? 'font-bold text-[#9C4221]' : 'font-medium'}`}>
+              <span className={`text-[11px] mt-1 whitespace-nowrap ${isActive ? 'font-bold text-[#E61964]' : 'font-medium'}`}>
                 {item.label}
               </span>
             </button>

@@ -20,6 +20,27 @@ import {
   INITIAL_TRANSACTIONS,
   INITIAL_REFERRALS,
 } from '../data/initialData';
+import {
+  subscribeToAuth,
+  signOutCurrentUser,
+  formatGhanaPhoneNumber,
+} from '../services/authService';
+import {
+  getUserProfile,
+  saveUserProfile,
+  updateUserProfileDoc,
+} from '../services/userService';
+import {
+  getSavingsProfile,
+  initSavingsProfile,
+  getUserTransactions,
+  claimDemoCommissionViaBackend,
+  requestWithdrawal,
+} from '../services/savingsService';
+import { getPartnersFromFirestore } from '../services/partnerService';
+import { seedDemoDataIfEmpty } from '../services/seedService';
+import { requestConsultationBooking } from '../services/consultantService';
+import { createCommunityPost, reportCommunityContent } from '../services/communityService';
 
 export type AppView =
   | 'login'
@@ -29,7 +50,11 @@ export type AppView =
   | 'ama'
   | 'earn'
   | 'care'
-  | 'ussd';
+  | 'ussd'
+  | 'landing'
+  | 'dashboard'
+  | 'circles'
+  | 'admin';
 
 export interface ReferralSuccessInfo {
   isOpen: boolean;
@@ -47,6 +72,10 @@ interface AppContextType {
   setPhoneNumber: (phone: string) => void;
   otpCode: string;
   setOtpCode: (otp: string) => void;
+  firebaseUid: string | null;
+  isAuthenticated: boolean;
+  handleAuthSuccess: (uid: string, phone?: string) => Promise<void>;
+  signOut: () => Promise<void>;
   partners: Partner[];
   healthcarePartners: HealthcarePartner[];
   supportCircle: SupportCircle;
@@ -61,6 +90,9 @@ interface AppContextType {
   setActiveCareService: (service: HealthcareService | null) => void;
   lastEarningAmount: number;
   redeemedCareAmount: number;
+  careSubTab: 'partners' | 'locator';
+  setCareSubTab: (tab: 'partners' | 'locator') => void;
+  openHospitalLocator: () => void;
   referralSuccess: ReferralSuccessInfo;
   setReferralSuccess: (info: ReferralSuccessInfo) => void;
   isMenuOpen: boolean;
@@ -71,8 +103,12 @@ interface AppContextType {
   nextTourStep: () => void;
   prevTourStep: () => void;
   endTour: () => void;
-  simulateReferralPurchase: (product: PartnerProduct, customerName?: string, partnerName?: string) => void;
+  simulateReferralPurchase: (product: PartnerProduct, customerName?: string, partnerName?: string) => Promise<void>;
   redeemSavingsForCare: (service: HealthcareService, amountToRedeem: number) => boolean;
+  requestFundWithdrawal: (amount: number, method: 'MOBILE_MONEY' | 'BANK', momoPhone?: string, network?: 'MTN' | 'Telecel' | 'AT') => Promise<{ success: boolean; error?: string }>;
+  bookConsultation: (params: { consultantId: string; consultantName?: string; reason: string; date: string; time: string; fee: number }) => Promise<{ success: boolean; error?: string }>;
+  submitPost: (content: string) => Promise<{ success: boolean; error?: string }>;
+  reportContent: (targetType: 'post' | 'comment' | 'user', targetId: string, reason: string) => Promise<{ success: boolean; error?: string }>;
   addPartner: (partner: Partner) => void;
   updatePartnerStatus: (partnerId: string, status: VerificationStatus) => void;
   updateHealthcareStatus: (partnerId: string, status: VerificationStatus) => void;
@@ -86,6 +122,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentView, setCurrentView] = useState<AppView>('login');
   const [phoneNumber, setPhoneNumber] = useState<string>('024 555 0192');
   const [otpCode, setOtpCode] = useState<string>('');
+  const [firebaseUid, setFirebaseUid] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<UserProfile>(INITIAL_USER);
   const [partners, setPartners] = useState<Partner[]>(INITIAL_PARTNERS);
   const [healthcarePartners, setHealthcarePartners] = useState<HealthcarePartner[]>(INITIAL_HEALTHCARE_PARTNERS);
@@ -99,7 +137,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeCareService, setActiveCareService] = useState<HealthcareService | null>(null);
   const [lastEarningAmount, setLastEarningAmount] = useState<number>(0);
   const [redeemedCareAmount, setRedeemedCareAmount] = useState<number>(0);
+  const [careSubTab, setCareSubTab] = useState<'partners' | 'locator'>('locator');
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isTourActive, setIsTourActive] = useState<boolean>(false);
+  const [tourStep, setTourStep] = useState<number>(0);
 
   const [referralSuccess, setReferralSuccess] = useState<ReferralSuccessInfo>({
     isOpen: false,
@@ -108,35 +149,177 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     partnerName: 'Numa Organics',
   });
 
-  // Guided Judge Presentation Mode state
-  const [isTourActive, setIsTourActive] = useState<boolean>(false);
-  const [tourStep, setTourStep] = useState<number>(0);
-
-  const updateUserProfile = (updates: Partial<UserProfile>) => {
-    setUser((prev) => ({ ...prev, ...updates }));
+  const openHospitalLocator = () => {
+    setCareSubTab('locator');
+    setCurrentView('care');
   };
 
-  // The Crucial Financial Logic: AI never touches money directly
-  const simulateReferralPurchase = (
+  // Initialize Firestore collections & load verified partners on boot
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        await seedDemoDataIfEmpty();
+        const firestorePartners = await getPartnersFromFirestore();
+        if (isMounted && firestorePartners && firestorePartners.length > 0) {
+          setPartners(firestorePartners);
+        }
+      } catch (err) {
+        console.warn('Initial data load note:', err);
+      }
+    })();
+
+    // Subscribe to Firebase Auth
+    const unsubscribe = subscribeToAuth(async (firebaseUser, fallbackUid) => {
+      const activeUid = firebaseUser?.uid || fallbackUid;
+      if (activeUid) {
+        setFirebaseUid(activeUid);
+        setIsAuthenticated(true);
+        // Load user profile & savings from Firestore
+        const profile = await getUserProfile(activeUid);
+        if (profile && isMounted) {
+          setUser((prev) => ({
+            ...prev,
+            id: activeUid,
+            name: profile.name || prev.name,
+            region: profile.location || prev.region,
+            facility: profile.facility || prev.facility,
+            pregnancyMonth: profile.dueWeeks ? Math.floor(profile.dueWeeks / 4.3) : prev.pregnancyMonth,
+          }));
+        }
+        // Load verified savings profile
+        const savings = await getSavingsProfile(activeUid);
+        if (savings && isMounted) {
+          setUser((prev) => ({
+            ...prev,
+            currentSavings: savings.currentBalance,
+            targetPreparationAmount: savings.goalAmount,
+          }));
+        }
+        // Load user transactions
+        const userTxs = await getUserTransactions(activeUid);
+        if (userTxs.length > 0 && isMounted) {
+          setTransactions(userTxs);
+        }
+      } else {
+        if (isMounted) {
+          setFirebaseUid(null);
+          setIsAuthenticated(false);
+        }
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, []);
+
+  const handleAuthSuccess = async (uid: string, phone?: string) => {
+    setFirebaseUid(uid);
+    setIsAuthenticated(true);
+
+    const formattedPhone = phone ? formatGhanaPhoneNumber(phone) : '+233245550192';
+
+    // 1. Persist or fetch user profile in Firestore
+    let existingProfile = await getUserProfile(uid);
+    if (!existingProfile) {
+      await saveUserProfile({
+        uid,
+        name: user.name || 'Akosua',
+        phoneNumber: formattedPhone,
+        location: user.region || 'Kumasi, Ashanti Region',
+        motherStatus: 'Expecting Mother',
+        facility: user.facility || 'Suntreso Government Hospital',
+        dueWeeks: 22,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    }
+
+    // 2. Initialize or fetch savings profile in Firestore
+    let savings = await getSavingsProfile(uid);
+    if (!savings) {
+      savings = await initSavingsProfile(uid, user.currentSavings || 120, user.targetPreparationAmount || 600);
+    }
+
+    if (savings) {
+      setUser((prev) => ({
+        ...prev,
+        id: uid,
+        currentSavings: savings.currentBalance,
+        targetPreparationAmount: savings.goalAmount,
+      }));
+    } else {
+      setUser((prev) => ({ ...prev, id: uid }));
+    }
+  };
+
+  const signOut = async () => {
+    await signOutCurrentUser();
+    setFirebaseUid(null);
+    setIsAuthenticated(false);
+    setCurrentView('login');
+  };
+
+  const updateUserProfile = (updates: Partial<UserProfile>) => {
+    setUser((prev) => {
+      const updated = { ...prev, ...updates };
+      if (firebaseUid) {
+        updateUserProfileDoc(firebaseUid, {
+          name: updated.name,
+          location: updated.region,
+          facility: updated.facility,
+          dueWeeks: updated.pregnancyMonth * 4,
+        }).catch((e) => console.warn('Firestore user update note:', e));
+      }
+      return updated;
+    });
+  };
+
+  // Secure Financial Logic: Server-authoritative demo commission
+  const simulateReferralPurchase = async (
     product: PartnerProduct,
     customerName = 'Customer in Kumasi Adum',
     partnerName?: string
   ) => {
-    if (!product || typeof product.demoCommission !== 'number' || product.demoCommission <= 0) {
-      return;
-    }
-
-    const earning = product.demoCommission;
-    const now = new Date();
-    const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    if (!product) return;
 
     const partnerObj = partners.find((p) => p.id === product.partnerId);
     const resolvedPartnerName = partnerName || partnerObj?.name || 'Demo Partner';
+    const activeUserId = user.id || firebaseUid || 'user_akosua_01';
 
-    // 1. Create transaction ledger entry
+    // Unique conversion event key for idempotency
+    const idempotencyKey = `ref_conv_${activeUserId}_${product.id}_${Date.now()}`;
+
+    // Call trusted server-side commission endpoint
+    const backendResult = await claimDemoCommissionViaBackend({
+      userId: activeUserId,
+      partnerId: product.partnerId,
+      productId: product.id,
+      customerName,
+      partnerName: resolvedPartnerName,
+      idempotencyKey,
+    });
+
+    const earning = backendResult.commission || product.demoCommission || 5;
+    const now = new Date();
+    const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    if (backendResult.alreadyProcessed) {
+      // Prevent duplicate crediting
+      alert('This demo purchase has already been credited to your Motherhood Fund.');
+      return;
+    }
+
+    // Update verified balance from server
+    const verifiedBalance = backendResult.newBalance !== undefined
+      ? backendResult.newBalance
+      : user.currentSavings + earning;
+
     const newTx: SavingsTransaction = {
-      id: `tx_${Date.now()}`,
-      userId: user.id,
+      id: backendResult.transactionId || `tx_${Date.now()}`,
+      userId: activeUserId,
       type: 'PARTNER_COMMISSION',
       amount: earning,
       source: resolvedPartnerName,
@@ -145,10 +328,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: `Today, ${timeString}`,
     };
 
-    // 2. Create referral tracking entry
     const newRef: Referral = {
       id: `ref_${Date.now()}`,
-      userId: user.id,
+      userId: activeUserId,
       partnerId: product.partnerId,
       productId: product.id,
       productName: product.name,
@@ -159,10 +341,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: `Today, ${timeString}`,
     };
 
-    // 3. Create commission record
     const newCommission: DemoCommission = {
       id: `comm_${Date.now()}`,
-      userId: user.id,
+      userId: activeUserId,
       partnerId: product.partnerId,
       productId: product.id,
       amount: earning,
@@ -170,13 +351,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: now.toISOString(),
     };
 
-    // 4. Update financial balance
     setUser((prev) => ({
       ...prev,
-      currentSavings: prev.currentSavings + earning,
+      currentSavings: verifiedBalance,
     }));
 
-    // 5. Update collective circle fund
     setSupportCircle((prev) => ({
       ...prev,
       collectiveSavings: prev.collectiveSavings + earning,
@@ -197,19 +376,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCommissions((prev) => [newCommission, ...prev]);
     setLastEarningAmount(earning);
 
-    // 6. Trigger celebration confetti
+    // Trigger celebration confetti
     try {
       confetti({
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#E8824A', '#2D6A4F', '#D97706', '#FFF'],
+        colors: ['#E61964', '#2E7D46', '#F8B4C8', '#FFF'],
       });
     } catch (e) {
-      // safe fallback if canvas not ready
+      // safe fallback
     }
 
-    // 7. Set referral success state for clean mobile modal
     setReferralSuccess({
       isOpen: true,
       amount: earning,
@@ -247,6 +425,64 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActiveCareService(service);
     setActiveModal('careSuccessModal');
     return true;
+  };
+
+  const requestFundWithdrawal = async (
+    amount: number,
+    method: 'MOBILE_MONEY' | 'BANK',
+    momoPhone?: string,
+    network?: 'MTN' | 'Telecel' | 'AT'
+  ) => {
+    return await requestWithdrawal({
+      userId: user.id || firebaseUid || 'user_akosua_01',
+      amount,
+      method,
+      phoneNumber: momoPhone || phoneNumber,
+      momoNetwork: network || 'MTN',
+    });
+  };
+
+  const bookConsultation = async (params: {
+    consultantId: string;
+    consultantName?: string;
+    reason: string;
+    date: string;
+    time: string;
+    fee: number;
+  }) => {
+    return await requestConsultationBooking({
+      userId: user.id || firebaseUid || 'user_akosua_01',
+      consultantId: params.consultantId,
+      consultantName: params.consultantName,
+      reason: params.reason,
+      requestedDate: params.date,
+      requestedTime: params.time,
+      fee: params.fee,
+    });
+  };
+
+  const submitPost = async (content: string) => {
+    const activeGroupId = user.supportCircleId || 'circle_march_2027';
+    const res = await createCommunityPost({
+      groupId: activeGroupId,
+      userId: user.id || firebaseUid || 'user_akosua_01',
+      userName: user.name,
+      content,
+    });
+    if (res.success && res.post) {
+      addSupportCircleMessage(content);
+      return { success: true };
+    }
+    return { success: false, error: res.error };
+  };
+
+  const reportContent = async (targetType: 'post' | 'comment' | 'user', targetId: string, reason: string) => {
+    return await reportCommunityContent({
+      reporterId: user.id || firebaseUid || 'user_akosua_01',
+      targetType,
+      targetId,
+      reason,
+    });
   };
 
   const addPartner = (newPartner: Partner) => {
@@ -373,6 +609,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setPhoneNumber,
         otpCode,
         setOtpCode,
+        firebaseUid,
+        isAuthenticated,
+        handleAuthSuccess,
+        signOut,
         partners,
         healthcarePartners,
         supportCircle,
@@ -387,6 +627,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveCareService,
         lastEarningAmount,
         redeemedCareAmount,
+        careSubTab,
+        setCareSubTab,
+        openHospitalLocator,
         referralSuccess,
         setReferralSuccess,
         isMenuOpen,
@@ -399,6 +642,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         endTour,
         simulateReferralPurchase,
         redeemSavingsForCare,
+        requestFundWithdrawal,
+        bookConsultation,
+        submitPost,
+        reportContent,
         addPartner,
         updatePartnerStatus,
         updateHealthcareStatus,

@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { X, Copy, Check, ExternalLink, ShoppingBag, Sparkles, MessageCircle, AlertCircle } from 'lucide-react';
 import { motion } from 'motion/react';
+import { generateAffiliateLink } from '../services/affiliateService';
 
 export const ShareProductModal: React.FC = () => {
   const { activeModal, setActiveModal, activeProductForShare, simulateReferralPurchase, user } = useApp();
   const [copied, setCopied] = useState(false);
   const [isSimulating, setIsSimulating] = useState(false);
+
+  useEffect(() => {
+    if (activeModal === 'shareProduct' && activeProductForShare && user?.id) {
+      generateAffiliateLink({
+        userId: user.id,
+        productId: activeProductForShare.id,
+        partnerId: activeProductForShare.partnerId,
+        customPrefix: user.referralCode || 'MAMA',
+      }).catch((e) => console.warn('Affiliate link tracking note:', e));
+    }
+  }, [activeModal, activeProductForShare, user?.id, user?.referralCode]);
 
   if (activeModal !== 'shareProduct' || !activeProductForShare) return null;
 

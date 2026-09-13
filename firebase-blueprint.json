@@ -1,0 +1,310 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with maternal stage, phone number, and location",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "location": { "type": "string" },
+        "motherStatus": { "type": "string" },
+        "facility": { "type": "string" },
+        "dueWeeks": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "name", "phoneNumber", "createdAt", "updatedAt"]
+    },
+    "SavingsProfile": {
+      "title": "SavingsProfile",
+      "description": "Motherhood Fund and savings balance for a user",
+      "type": "object",
+      "properties": {
+        "goalAmount": { "type": "number" },
+        "currentBalance": { "type": "number" },
+        "availableBalance": { "type": "number" },
+        "pendingBalance": { "type": "number" },
+        "currency": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["goalAmount", "currentBalance", "availableBalance", "currency", "updatedAt"]
+    },
+    "SavingsTransaction": {
+      "title": "SavingsTransaction",
+      "description": "Record of a commission, savings, withdrawal, or adjustment",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "amount": { "type": "number" },
+        "source": { "type": "string" },
+        "partnerId": { "type": "string" },
+        "productId": { "type": "string" },
+        "status": { "type": "string" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["type", "amount", "source", "status", "createdAt"]
+    },
+    "AffiliateLink": {
+      "title": "AffiliateLink",
+      "description": "User-generated referral link for partner products",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "partnerId": { "type": "string" },
+        "userId": { "type": "string" },
+        "referralCode": { "type": "string" },
+        "url": { "type": "string" },
+        "clickCount": { "type": "number" },
+        "conversionCount": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["productId", "partnerId", "userId", "referralCode", "url", "status", "createdAt"]
+    },
+    "Partner": {
+      "title": "Partner",
+      "description": "Earn & Save partner directory entry",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "website": { "type": "string" },
+        "shopUrl": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "logo": { "type": "string" },
+        "status": { "type": "string" },
+        "isDemo": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "category", "status", "isDemo"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Vetted partner product available for referral commission",
+      "type": "object",
+      "properties": {
+        "partnerId": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "demoCommission": { "type": "number" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["partnerId", "name", "price", "demoCommission", "active"]
+    },
+    "Consultant": {
+      "title": "Consultant",
+      "description": "Vetted healthcare professional for maternal consultations",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "profession": { "type": "string" },
+        "specialty": { "type": "string" },
+        "bio": { "type": "string" },
+        "location": { "type": "string" },
+        "consultationFee": { "type": "number" },
+        "partnerRate": { "type": "number" },
+        "availability": { "type": "string" },
+        "isDemo": { "type": "boolean" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "profession", "specialty", "isDemo", "status"]
+    },
+    "Consultation": {
+      "title": "Consultation",
+      "description": "Appointment or consultation booking request",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "consultantId": { "type": "string" },
+        "reason": { "type": "string" },
+        "requestedDate": { "type": "string" },
+        "requestedTime": { "type": "string" },
+        "fee": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "consultantId", "reason", "fee", "status", "createdAt"]
+    },
+    "Hospital": {
+      "title": "Hospital",
+      "description": "Healthcare facility listing",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "location": { "type": "string" },
+        "services": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "partnerBenefit": { "type": "string" },
+        "contact": { "type": "string" },
+        "isDemo": { "type": "boolean" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "location", "isDemo", "status"]
+    },
+    "CommunityGroup": {
+      "title": "CommunityGroup",
+      "description": "Support circle or community group",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "memberCount": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "description", "memberCount"]
+    },
+    "CommunityPost": {
+      "title": "CommunityPost",
+      "description": "Post inside a community group",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "content": { "type": "string" },
+        "likeCount": { "type": "number" },
+        "commentCount": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "userName", "content", "createdAt", "status"]
+    },
+    "CommunityComment": {
+      "title": "CommunityComment",
+      "description": "Comment on a community post",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "content": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "userName", "content", "createdAt"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "Moderation report for inappropriate community content",
+      "type": "object",
+      "properties": {
+        "reporterId": { "type": "string" },
+        "targetType": { "type": "string" },
+        "targetId": { "type": "string" },
+        "reason": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["reporterId", "targetType", "targetId", "reason", "status", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct message conversation thread",
+      "type": "object",
+      "properties": {
+        "participantIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["participantIds", "createdAt", "updatedAt"]
+    },
+    "DirectMessage": {
+      "title": "DirectMessage",
+      "description": "Message in direct conversation thread",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "text": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["senderId", "text", "createdAt"]
+    },
+    "Withdrawal": {
+      "title": "Withdrawal",
+      "description": "Withdrawal request from Motherhood Fund",
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number" },
+        "method": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["amount", "method", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "User" },
+      "description": "User profile"
+    },
+    "/users/{userId}/savings/{savingsId}": {
+      "schema": { "$ref": "SavingsProfile" },
+      "description": "User Motherhood Fund savings balance"
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": { "$ref": "SavingsTransaction" },
+      "description": "Savings transactions"
+    },
+    "/users/{userId}/affiliateLinks/{linkId}": {
+      "schema": { "$ref": "AffiliateLink" },
+      "description": "Generated partner affiliate links"
+    },
+    "/users/{userId}/withdrawals/{withdrawalId}": {
+      "schema": { "$ref": "Withdrawal" },
+      "description": "Withdrawal requests"
+    },
+    "/partners/{partnerId}": {
+      "schema": { "$ref": "Partner" },
+      "description": "Earn & Save partner brands"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "Product" },
+      "description": "Partner products"
+    },
+    "/consultants/{consultantId}": {
+      "schema": { "$ref": "Consultant" },
+      "description": "Maternal healthcare consultants"
+    },
+    "/consultations/{consultationId}": {
+      "schema": { "$ref": "Consultation" },
+      "description": "Consultation booking requests"
+    },
+    "/hospitals/{hospitalId}": {
+      "schema": { "$ref": "Hospital" },
+      "description": "Maternal hospital facilities"
+    },
+    "/communityGroups/{groupId}": {
+      "schema": { "$ref": "CommunityGroup" },
+      "description": "Community support circles"
+    },
+    "/communityGroups/{groupId}/posts/{postId}": {
+      "schema": { "$ref": "CommunityPost" },
+      "description": "Posts in community support circles"
+    },
+    "/communityGroups/{groupId}/posts/{postId}/comments/{commentId}": {
+      "schema": { "$ref": "CommunityComment" },
+      "description": "Comments on community posts"
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "Report" },
+      "description": "Moderation reports"
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "Conversation" },
+      "description": "Direct message threads"
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "DirectMessage" },
+      "description": "Messages in direct conversations"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Partner, VerificationStatus } from '../types';
+import { savePartnerToFirestore } from '../services/partnerService';
 import {
   ShieldCheck,
   Building2,
@@ -72,6 +73,7 @@ export const FounderDashboard: React.FC = () => {
     };
 
     addPartner(newP);
+    savePartnerToFirestore(newP).catch((err) => console.warn('Firestore partner save note:', err));
     setShowAddPartnerModal(false);
     setNewPartnerName('');
     setNewWebsite('');
@@ -85,12 +87,12 @@ export const FounderDashboard: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-bold uppercase tracking-wider bg-[#281C16] text-[#FAF7F2] px-2.5 py-0.5 rounded-full">
+            <span className="text-xs font-bold uppercase tracking-wider bg-[#1E232B] text-white px-2.5 py-0.5 rounded-full">
               Founder &amp; Administrator Portal
             </span>
-            <span className="text-xs text-[#7A695C]">• Mama Yie Ecosystem</span>
+            <span className="text-xs text-[#64748B]">• Mama Yie Ecosystem</span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#281C16]">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1E232B]">
             Gatekeeper &amp; Operations Control
           </h1>
         </div>
@@ -98,16 +100,16 @@ export const FounderDashboard: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAddPartnerModal(true)}
-            className="px-4 py-2.5 rounded-xl bg-[#281C16] hover:bg-[#3D291F] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs"
+            className="px-4 py-2.5 rounded-xl bg-[#E61964] hover:bg-[#D01255] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs"
           >
-            <PlusCircle className="w-4 h-4 text-[#E8824A]" />
+            <PlusCircle className="w-4 h-4 text-white" />
             <span>Add Vetted Partner</span>
           </button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#E8DFC8] pb-3 mb-8 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-[#F0EBE9] pb-3 mb-8 overflow-x-auto">
         {[
           { id: 'overview', label: 'Ecosystem Overview' },
           { id: 'partners', label: 'Brand Partners' },
@@ -120,8 +122,8 @@ export const FounderDashboard: React.FC = () => {
             onClick={() => setActiveTab(tab.id as any)}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-[#FAF1E4] text-[#9C4221] border border-[#E8DFC8]'
-                : 'text-[#5C4A3E] hover:text-[#281C16]'
+                ? 'bg-[#FDF2F5] text-[#E61964] border border-[#F8B4C8]'
+                : 'text-[#64748B] hover:text-[#1E232B]'
             }`}
           >
             {tab.label}
@@ -133,78 +135,78 @@ export const FounderDashboard: React.FC = () => {
       {activeTab === 'overview' && (
         <div className="space-y-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-5 rounded-3xl bg-white border border-[#E8DFC8] shadow-xs">
-              <div className="text-xs text-[#7A695C] font-semibold">Registered Mothers</div>
-              <div className="text-2xl sm:text-3xl font-serif font-bold text-[#281C16] mt-1">1,420</div>
-              <div className="text-[10px] text-[#2D6A4F] font-bold mt-1">Ashanti &amp; Greater Accra</div>
+            <div className="p-5 rounded-3xl bg-white border border-[#F0EBE9] shadow-xs">
+              <div className="text-xs text-[#64748B] font-semibold">Registered Mothers</div>
+              <div className="text-2xl sm:text-3xl font-serif font-bold text-[#1E232B] mt-1">1,420</div>
+              <div className="text-[10px] text-[#2E7D46] font-bold mt-1">Ashanti &amp; Greater Accra</div>
             </div>
 
-            <div className="p-5 rounded-3xl bg-white border border-[#E8DFC8] shadow-xs">
-              <div className="text-xs text-[#7A695C] font-semibold">Total Savings Prepared</div>
-              <div className="text-2xl sm:text-3xl font-serif font-bold text-[#2D6A4F] mt-1">GH₵348,600</div>
-              <div className="text-[10px] text-[#7A695C] mt-1">Across all mother funds</div>
+            <div className="p-5 rounded-3xl bg-white border border-[#F0EBE9] shadow-xs">
+              <div className="text-xs text-[#64748B] font-semibold">Total Savings Prepared</div>
+              <div className="text-2xl sm:text-3xl font-serif font-bold text-[#2E7D46] mt-1">GH₵348,600</div>
+              <div className="text-[10px] text-[#64748B] mt-1">Across all mother funds</div>
             </div>
 
-            <div className="p-5 rounded-3xl bg-white border border-[#E8DFC8] shadow-xs">
-              <div className="text-xs text-[#7A695C] font-semibold">Referral Earnings Paid</div>
-              <div className="text-2xl sm:text-3xl font-serif font-bold text-[#9C4221] mt-1">GH₵84,500</div>
-              <div className="text-[10px] text-[#7A695C] mt-1">100% deposited to funds</div>
+            <div className="p-5 rounded-3xl bg-white border border-[#F0EBE9] shadow-xs">
+              <div className="text-xs text-[#64748B] font-semibold">Referral Earnings Paid</div>
+              <div className="text-2xl sm:text-3xl font-serif font-bold text-[#E61964] mt-1">GH₵84,500</div>
+              <div className="text-[10px] text-[#64748B] mt-1">100% deposited to funds</div>
             </div>
 
-            <div className="p-5 rounded-3xl bg-white border border-[#E8DFC8] shadow-xs">
-              <div className="text-xs text-[#7A695C] font-semibold">USSD Sessions Handled</div>
-              <div className="text-2xl sm:text-3xl font-serif font-bold text-[#281C16] mt-1">14,890</div>
-              <div className="text-[10px] text-amber-700 font-bold mt-1">Zero-data GSM queries</div>
+            <div className="p-5 rounded-3xl bg-white border border-[#F0EBE9] shadow-xs">
+              <div className="text-xs text-[#64748B] font-semibold">USSD Sessions Handled</div>
+              <div className="text-2xl sm:text-3xl font-serif font-bold text-[#1E232B] mt-1">14,890</div>
+              <div className="text-[10px] text-[#2E7D46] font-bold mt-1">Zero-data GSM queries</div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* The Gatekeeper Philosophy */}
-            <div className="bg-[#FAF1E4] p-6 rounded-3xl border border-[#E8DFC8]">
-              <h3 className="font-serif text-lg font-bold text-[#9C4221] mb-2 flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5" />
+            <div className="bg-[#FDF2F5] p-6 rounded-3xl border border-[#F8B4C8]">
+              <h3 className="font-serif text-lg font-bold text-[#E61964] mb-2 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-[#E61964]" />
                 Vetting &amp; Gatekeeping System
               </h3>
-              <p className="text-xs text-[#5C4A3E] leading-relaxed mb-4">
+              <p className="text-xs text-[#64748B] leading-relaxed mb-4">
                 Mama Yie deliberately rejects the open marketplace model. As founders, we protect vulnerable expecting mothers by personally verifying every business product (preventing skin-lightening toxins or harmful decoctions) and credentialing every midwife and facility.
               </p>
               <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2 text-[#281C16] font-medium">
-                  <span className="w-2 h-2 rounded-full bg-[#2D6A4F]"></span>
+                <div className="flex items-center gap-2 text-[#1E232B] font-medium">
+                  <span className="w-2 h-2 rounded-full bg-[#2E7D46]"></span>
                   <span><strong>Businesses:</strong> Product safety audit &amp; fair commission guarantee</span>
                 </div>
-                <div className="flex items-center gap-2 text-[#281C16] font-medium">
-                  <span className="w-2 h-2 rounded-full bg-[#2D6A4F]"></span>
+                <div className="flex items-center gap-2 text-[#1E232B] font-medium">
+                  <span className="w-2 h-2 rounded-full bg-[#2E7D46]"></span>
                   <span><strong>Healthcare:</strong> Nurses &amp; Midwives Council verification</span>
                 </div>
               </div>
             </div>
 
             {/* Current Demo Mother Status */}
-            <div className="bg-white p-6 rounded-3xl border border-[#E8DFC8] shadow-xs">
-              <h3 className="font-serif text-lg font-bold text-[#281C16] mb-2">
+            <div className="bg-white p-6 rounded-3xl border border-[#F0EBE9] shadow-xs">
+              <h3 className="font-serif text-lg font-bold text-[#1E232B] mb-2">
                 Active Demo Case: Akosua
               </h3>
-              <div className="space-y-2 text-xs text-[#5C4A3E]">
-                <div className="flex justify-between py-1 border-b border-[#E8DFC8]/60">
+              <div className="space-y-2 text-xs text-[#64748B]">
+                <div className="flex justify-between py-1 border-b border-[#F0EBE9]">
                   <span>Location / Market:</span>
-                  <span className="font-bold text-[#281C16]">{user.region}</span>
+                  <span className="font-bold text-[#1E232B]">{user.region}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-[#E8DFC8]/60">
+                <div className="flex justify-between py-1 border-b border-[#F0EBE9]">
                   <span>Starting Savings:</span>
-                  <span className="font-mono font-bold text-[#7A695C]">GH₵{user.startingSavings}</span>
+                  <span className="font-mono font-bold text-[#64748B]">GH₵{user.startingSavings}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-[#E8DFC8]/60">
+                <div className="flex justify-between py-1 border-b border-[#F0EBE9]">
                   <span>Current Prepared Balance:</span>
-                  <span className="font-mono font-bold text-[#2D6A4F]">GH₵{user.currentSavings}</span>
+                  <span className="font-mono font-bold text-[#2E7D46]">GH₵{user.currentSavings}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-[#E8DFC8]/60">
+                <div className="flex justify-between py-1 border-b border-[#F0EBE9]">
                   <span>Delivery Facility:</span>
-                  <span className="font-bold text-[#281C16]">{user.facility}</span>
+                  <span className="font-bold text-[#1E232B]">{user.facility}</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Referral Code:</span>
-                  <span className="font-mono font-bold text-[#9C4221]">{user.referralCode}</span>
+                  <span className="font-mono font-bold text-[#E61964]">{user.referralCode}</span>
                 </div>
               </div>
             </div>
@@ -216,12 +218,12 @@ export const FounderDashboard: React.FC = () => {
       {activeTab === 'partners' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="font-serif text-xl font-bold text-[#281C16]">
+            <h2 className="font-serif text-xl font-bold text-[#1E232B]">
               Vetted Commercial Partners ({partners.length})
             </h2>
             <button
               onClick={() => setShowAddPartnerModal(true)}
-              className="px-3 py-1.5 rounded-xl bg-[#2D6A4F] text-white text-xs font-bold cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[#2E7D46] text-white text-xs font-bold cursor-pointer"
             >
               + Onboard New Brand
             </button>
@@ -231,15 +233,15 @@ export const FounderDashboard: React.FC = () => {
             {partners.map((p) => (
               <div
                 key={p.id}
-                className="bg-white p-6 rounded-3xl border border-[#E8DFC8] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6"
+                className="bg-white p-6 rounded-3xl border border-[#F0EBE9] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6"
               >
                 <div>
                   <div className="flex items-center gap-2.5">
-                    <h3 className="font-serif text-lg font-bold text-[#281C16]">{p.name}</h3>
+                    <h3 className="font-serif text-lg font-bold text-[#1E232B]">{p.name}</h3>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         p.verificationStatus === 'VERIFIED'
-                          ? 'bg-[#EAF5EF] text-[#2D6A4F]'
+                          ? 'bg-[#EDF7EE] text-[#2E7D46] border border-[#BAE3C2]'
                           : p.verificationStatus === 'PENDING'
                           ? 'bg-amber-50 text-amber-800'
                           : 'bg-red-50 text-red-800'
@@ -248,18 +250,18 @@ export const FounderDashboard: React.FC = () => {
                       {p.verificationStatus}
                     </span>
                     {p.isPotentialPartner && (
-                      <span className="text-[10px] bg-[#FAF1E4] text-[#9C4221] px-2 py-0.5 rounded-full font-bold">
+                      <span className="text-[10px] bg-[#FDF2F5] text-[#E61964] px-2 py-0.5 rounded-full font-bold border border-[#F8B4C8]">
                         Demo Mode
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-[#7A695C] mt-1 max-w-xl">{p.description}</p>
-                  <div className="text-xs text-[#5C4A3E] mt-2 flex items-center gap-3">
+                  <p className="text-xs text-[#64748B] mt-1 max-w-xl">{p.description}</p>
+                  <div className="text-xs text-[#64748B] mt-2 flex items-center gap-3">
                     <a
                       href={p.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#9C4221] hover:underline flex items-center gap-1"
+                      className="text-[#E61964] hover:underline flex items-center gap-1"
                     >
                       <span>{p.website}</span>
                       <ExternalLink className="w-3 h-3" />
@@ -272,13 +274,13 @@ export const FounderDashboard: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => updatePartnerStatus(p.id, 'VERIFIED')}
-                    className="px-3 py-1.5 rounded-xl bg-[#EAF5EF] text-[#2D6A4F] hover:bg-[#d8ece0] text-xs font-bold cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-[#EDF7EE] text-[#2E7D46] hover:bg-[#d8ece0] text-xs font-bold cursor-pointer border border-[#BAE3C2]"
                   >
                     Set Verified
                   </button>
                   <button
                     onClick={() => updatePartnerStatus(p.id, 'UNDER_REVIEW')}
-                    className="px-3 py-1.5 rounded-xl bg-[#FAF7F2] text-[#5C4A3E] hover:bg-[#F4EFE6] text-xs font-medium cursor-pointer border border-[#E8DFC8]"
+                    className="px-3 py-1.5 rounded-xl bg-[#FAF8F8] text-[#64748B] hover:bg-[#F0EBE9] text-xs font-medium cursor-pointer border border-[#F0EBE9]"
                   >
                     Review
                   </button>
@@ -298,7 +300,7 @@ export const FounderDashboard: React.FC = () => {
       {/* HEALTHCARE GATEKEEPING TAB */}
       {activeTab === 'healthcare' && (
         <div className="space-y-6">
-          <h2 className="font-serif text-xl font-bold text-[#281C16]">
+          <h2 className="font-serif text-xl font-bold text-[#1E232B]">
             Clinical &amp; Maternal Gatekeeping ({healthcarePartners.length})
           </h2>
 
@@ -306,22 +308,22 @@ export const FounderDashboard: React.FC = () => {
             {healthcarePartners.map((hp) => (
               <div
                 key={hp.id}
-                className="bg-white p-6 rounded-3xl border border-[#E8DFC8] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6"
+                className="bg-white p-6 rounded-3xl border border-[#F0EBE9] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-serif text-lg font-bold text-[#281C16]">{hp.name}</h3>
-                    <span className="text-[10px] font-bold bg-[#EAF5EF] text-[#2D6A4F] px-2 py-0.5 rounded-full">
+                    <h3 className="font-serif text-lg font-bold text-[#1E232B]">{hp.name}</h3>
+                    <span className="text-[10px] font-bold bg-[#EDF7EE] text-[#2E7D46] px-2 py-0.5 rounded-full border border-[#BAE3C2]">
                       ✓ {hp.verificationStatus}
                     </span>
                   </div>
-                  <p className="text-xs text-[#7A695C] mt-1">
+                  <p className="text-xs text-[#64748B] mt-1">
                     {hp.location} • {hp.phone} • {hp.services.length} Negotiated Services
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-[#2D6A4F] bg-[#FAF7F2] px-3 py-1.5 rounded-xl border border-[#E8DFC8]">
+                  <span className="text-xs font-mono font-bold text-[#2E7D46] bg-[#EDF7EE] px-3 py-1.5 rounded-xl border border-[#BAE3C2]">
                     Credentials Audited
                   </span>
                 </div>
@@ -333,8 +335,8 @@ export const FounderDashboard: React.FC = () => {
 
       {/* REFERRAL LEDGER TAB */}
       {activeTab === 'referrals' && (
-        <div className="bg-white rounded-3xl border border-[#E8DFC8] shadow-xs p-6">
-          <h2 className="font-serif text-xl font-bold text-[#281C16] mb-4">
+        <div className="bg-white rounded-3xl border border-[#F0EBE9] shadow-xs p-6">
+          <h2 className="font-serif text-xl font-bold text-[#1E232B] mb-4">
             Auditable Referral &amp; Fund Allocation Ledger
           </h2>
 
@@ -342,17 +344,17 @@ export const FounderDashboard: React.FC = () => {
             {referrals.map((ref) => (
               <div
                 key={ref.id}
-                className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E8DFC8] flex items-center justify-between gap-4 text-xs"
+                className="p-4 rounded-2xl bg-[#FAF8F8] border border-[#F0EBE9] flex items-center justify-between gap-4 text-xs"
               >
                 <div>
-                  <div className="font-bold text-sm text-[#281C16]">{ref.productName}</div>
-                  <div className="text-[#7A695C] mt-0.5">
-                    Referral Code: <span className="font-mono font-bold text-[#9C4221]">{ref.referralCode}</span> • Customer: {ref.customerName || 'Anonymous'}
+                  <div className="font-bold text-sm text-[#1E232B]">{ref.productName}</div>
+                  <div className="text-[#64748B] mt-0.5">
+                    Referral Code: <span className="font-mono font-bold text-[#E61964]">{ref.referralCode}</span> • Customer: {ref.customerName || 'Anonymous'}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono font-bold text-sm text-[#2D6A4F]">+GH₵{ref.commission}</div>
-                  <div className="text-[10px] font-bold uppercase text-[#2D6A4F] bg-[#EAF5EF] px-2 py-0.5 rounded-full inline-block mt-0.5">
+                  <div className="font-mono font-bold text-sm text-[#2E7D46]">+GH₵{ref.commission}</div>
+                  <div className="text-[10px] font-bold uppercase text-[#2E7D46] bg-[#EDF7EE] px-2 py-0.5 rounded-full inline-block mt-0.5 border border-[#BAE3C2]">
                     {ref.status}
                   </div>
                 </div>
@@ -364,21 +366,21 @@ export const FounderDashboard: React.FC = () => {
 
       {/* MOTHERS TRIAGE TAB */}
       {activeTab === 'mothers' && (
-        <div className="bg-white rounded-3xl border border-[#E8DFC8] shadow-xs p-6">
-          <h2 className="font-serif text-xl font-bold text-[#281C16] mb-4">
+        <div className="bg-white rounded-3xl border border-[#F0EBE9] shadow-xs p-6">
+          <h2 className="font-serif text-xl font-bold text-[#1E232B] mb-4">
             Mothers Risk &amp; Preparation Triage
           </h2>
           <div className="space-y-3">
-            <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E8DFC8] flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-[#FAF8F8] border border-[#F0EBE9] flex items-center justify-between">
               <div>
-                <div className="font-bold text-sm text-[#281C16]">Akosua (24) — Kejetia, Kumasi</div>
-                <div className="text-xs text-[#7A695C]">5 months pregnant • Due March 28, 2027 • Basic Phone (USSD)</div>
+                <div className="font-bold text-sm text-[#1E232B]">Akosua (24) — Kejetia, Kumasi</div>
+                <div className="text-xs text-[#64748B]">5 months pregnant • Due March 28, 2027 • Basic Phone (USSD)</div>
               </div>
               <div className="text-right">
-                <div className="text-xs font-mono font-bold text-[#2D6A4F]">
+                <div className="text-xs font-mono font-bold text-[#2E7D46]">
                   GH₵{user.currentSavings} / GH₵{user.targetPreparationAmount}
                 </div>
-                <span className="text-[10px] font-bold bg-[#EAF5EF] text-[#2D6A4F] px-2 py-0.5 rounded-full inline-block mt-0.5">
+                <span className="text-[10px] font-bold bg-[#EDF7EE] text-[#2E7D46] px-2 py-0.5 rounded-full inline-block mt-0.5 border border-[#BAE3C2]">
                   ON TRACK VIA NUMA
                 </span>
               </div>
@@ -390,64 +392,64 @@ export const FounderDashboard: React.FC = () => {
       {/* Modal: Add Partner */}
       {showAddPartnerModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E8DFC8]">
-            <h3 className="font-serif text-2xl font-bold text-[#281C16] mb-1">Onboard Vetted Brand Partner</h3>
-            <p className="text-xs text-[#7A695C] mb-5">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#F0EBE9]">
+            <h3 className="font-serif text-2xl font-bold text-[#1E232B] mb-1">Onboard Vetted Brand Partner</h3>
+            <p className="text-xs text-[#64748B] mb-5">
               Only authentic, clean local products that pass safety verification are admitted.
             </p>
 
             <form onSubmit={handleCreatePartner} className="space-y-4 text-xs">
               <div>
-                <label className="font-bold text-[#5C4A3E] block mb-1">Business Name</label>
+                <label className="font-bold text-[#1E232B] block mb-1">Business Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Asanka Organics"
                   value={newPartnerName}
                   onChange={(e) => setNewPartnerName(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFC8] text-xs"
+                  className="w-full p-2.5 rounded-xl bg-[#FAF8F8] border border-[#F0EBE9] text-xs text-[#1E232B] focus:border-[#E61964] outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-[#5C4A3E] block mb-1">Website URL</label>
+                <label className="font-bold text-[#1E232B] block mb-1">Website URL</label>
                 <input
                   type="url"
                   placeholder="https://..."
                   value={newWebsite}
                   onChange={(e) => setNewWebsite(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFC8] text-xs"
+                  className="w-full p-2.5 rounded-xl bg-[#FAF8F8] border border-[#F0EBE9] text-xs text-[#1E232B] focus:border-[#E61964] outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-[#5C4A3E] block mb-1">Vetted Product Name</label>
+                <label className="font-bold text-[#1E232B] block mb-1">Vetted Product Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Pure Cocoa Butter Glow"
                   value={newProductName}
                   onChange={(e) => setNewProductName(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFC8] text-xs"
+                  className="w-full p-2.5 rounded-xl bg-[#FAF8F8] border border-[#F0EBE9] text-xs text-[#1E232B] focus:border-[#E61964] outline-hidden"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-[#5C4A3E] block mb-1">Retail Price (GH₵)</label>
+                  <label className="font-bold text-[#1E232B] block mb-1">Retail Price (GH₵)</label>
                   <input
                     type="number"
                     value={newRetailPrice}
                     onChange={(e) => setNewRetailPrice(e.target.value)}
-                    className="w-full p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFC8] text-xs font-mono font-bold"
+                    className="w-full p-2.5 rounded-xl bg-[#FAF8F8] border border-[#F0EBE9] text-xs font-mono font-bold text-[#1E232B] focus:border-[#E61964] outline-hidden"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-[#5C4A3E] block mb-1">Mother Commission (GH₵)</label>
+                  <label className="font-bold text-[#1E232B] block mb-1">Mother Commission (GH₵)</label>
                   <input
                     type="number"
                     value={newCommission}
                     onChange={(e) => setNewCommission(e.target.value)}
-                    className="w-full p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFC8] text-xs font-mono font-bold"
+                    className="w-full p-2.5 rounded-xl bg-[#FAF8F8] border border-[#F0EBE9] text-xs font-mono font-bold text-[#1E232B] focus:border-[#E61964] outline-hidden"
                   />
                 </div>
               </div>
@@ -456,13 +458,13 @@ export const FounderDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddPartnerModal(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-[#FAF7F2] text-[#5C4A3E] font-medium"
+                  className="flex-1 py-2.5 rounded-xl bg-[#FAF8F8] text-[#64748B] hover:bg-[#F0EBE9] font-medium cursor-pointer border border-[#F0EBE9]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-[#281C16] text-white font-bold"
+                  className="flex-1 py-2.5 rounded-xl bg-[#E61964] hover:bg-[#D01255] text-white font-bold cursor-pointer"
                 >
                   Approve &amp; Add
                 </button>
