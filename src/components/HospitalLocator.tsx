@@ -31,32 +31,87 @@ export const HospitalLocator: React.FC<HospitalLocatorProps> = ({ onBackToPartne
   // State
   const [facilities, setFacilities] = useState<HospitalFacility[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isDetectingLocation, setIsDetectingLocation] = useState<boolean>(false);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
-  const [permissionStatusMessage, setPermissionStatusMessage] = useState<string>('');
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+  const [searchMode, setSearchMode] = useState<'none' | 'gps' | 'manual'>('none');
+  const [permissionState, setPermissionState] = useState<'prompt' | 'granted' | 'denied' | 'unknown'>('unknown');
+  const [locationError, setLocationError] = useState<{
+    type: 'unsupported' | 'permission_denied' | 'position_unavailable' | 'timeout' | 'generic';
+    message: string;
+    canRetry: boolean;
+  } | null>(null);
+
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'verified' | 'emergency' | 'maternity'>('all');
   const [selectedFacility, setSelectedFacility] = useState<HospitalFacility | null>(null);
   const [showEmergencyModal, setShowEmergencyModal] = useState<boolean>(false);
   const [usingLiveGooglePlaces, setUsingLiveGooglePlaces] = useState<boolean>(false);
 
-  // Fetch facilities from server-side endpoint
-  const fetchNearbyFacilities = async (
-    lat?: number,
-    lng?: number,
-    manualQuery?: string,
+  // Monitor permission state where supported (Requirement 11)
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && 'permissions' in navigator && navigator.permissions?.query) {
+      navigator.permissions
+        .query({ name: 'geolocation' as PermissionName })
+        .then((status) => {
+          console.log('Permission state:', status.state);
+          setPermissionState(status.state as 'prompt' | 'granted' | 'denied');
+          status.onchange = () => {
+            console.log('Permission state:', status.state);
+            setPermissionState(status.state as 'prompt' | 'granted' | 'denied');
+            if (status.state === 'granted') {
+              setLocationError(null);
+            }
+          };
+        })
+        .catch(() => {
+          // Permissions API query not supported for geolocation in some browsers
+        });
+    }
+  }, []);
+
+  // Fetch facilities using GPS coordinates
+  const fetchFacilitiesByCoords = async (
+    lat: number,
+    lng: number,
     filter: string = activeFilter
   ) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (lat !== undefined && lng !== undefined) {
-        params.append('lat', lat.toString());
-        params.append('lng', lng.toString());
+      params.append('lat', lat.toString());
+      params.append('lng', lng.toString());
+      if (filter && filter !== 'all') {
+        params.append('type', filter);
       }
-      if (manualQuery && manualQuery.trim()) {
-        params.append('query', manualQuery.trim());
+
+      const res = await fetch(`/api/hospitals/nearby?${params.toString()}`);
+      if (!res.ok) {
+        throw new Error('Failed to load facilities');
+      }
+      const data = await res.json();
+      if (data.success && Array.isArray(data.facilities)) {
+        setFacilities(data.facilities);
+        setUsingLiveGooglePlaces(!!data.usingGooglePlacesLive);
+      }
+    } catch (err) {
+      console.error('Error fetching nearby hospitals by GPS:', err);
+    } finally {
+      setLoading(false);
+      setHasSearched(true);
+    }
+  };
+
+  // Fetch facilities using text query / initial listing
+  const fetchFacilitiesByQuery = async (
+    query: string = '',
+    filter: string = activeFilter
+  ) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (query && query.trim()) {
+        params.append('query', query.trim());
       }
       if (filter && filter !== 'all') {
         params.append('type', filter);
@@ -72,86 +127,133 @@ export const HospitalLocator: React.FC<HospitalLocatorProps> = ({ onBackToPartne
         setUsingLiveGooglePlaces(!!data.usingGooglePlacesLive);
       }
     } catch (err) {
-      console.error('Error fetching nearby hospitals:', err);
+      console.error('Error fetching facilities by query:', err);
     } finally {
       setLoading(false);
       setHasSearched(true);
     }
   };
 
-  // User initiates location request
+  // Format accuracy for display (Requirement 4 & 5)
+  const formatAccuracy = (meters: number): string => {
+    if (meters < 1000) {
+      return `${Math.round(meters)} m`;
+    }
+    return `${(meters / 1000).toFixed(1)} km`;
+  };
+
+  // User initiates location request (Requirement 1, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 18)
   const handleRequestLocation = () => {
-    if (!navigator.geolocation) {
-      setPermissionDenied(true);
-      setPermissionStatusMessage('Geolocation is not supported by your device browser. You can search manually below.');
-      fetchNearbyFacilities(6.6885, -1.6244, '', activeFilter);
+    // Prevent duplicate requests while one is running (Requirement 12)
+    if (isDetectingLocation) return;
+
+    // Check whether geolocation is available before calling it (Requirement 10)
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setLocationError({
+        type: 'unsupported',
+        message: 'Location detection is not supported by your browser. Please search by town, neighborhood, or facility name.',
+        canRetry: false,
+      });
       return;
     }
 
-    setLoading(true);
-    setPermissionDenied(false);
-    setPermissionStatusMessage('');
+    console.log('Location request started');
+    console.log('Permission state:', permissionState);
+
+    setIsDetectingLocation(true);
+    setLocationError(null);
+
+    const geoOptions: PositionOptions = {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0,
+    };
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const coords = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        setUserCoords(coords);
-        setPermissionDenied(false);
-        fetchNearbyFacilities(coords.lat, coords.lng, searchQuery, activeFilter);
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+
+        console.log('Latitude:', lat);
+        console.log('Longitude:', lng);
+        console.log('Accuracy:', accuracy);
+
+        setUserCoords({ lat, lng, accuracy });
+        setIsDetectingLocation(false);
+        setLocationError(null);
+        setSearchMode('gps');
+
+        // Fetch facilities using the real coordinates
+        fetchFacilitiesByCoords(lat, lng, activeFilter);
       },
       (error) => {
-        console.warn('Geolocation error:', error);
-        setLoading(false);
-        setHasSearched(true);
-        if (error.code === error.PERMISSION_DENIED) {
-          setPermissionDenied(true);
-          setPermissionStatusMessage(
-            'Location access was not granted. To use your current GPS location, please enable location permissions in your browser or device settings. You can also search manually below.'
-          );
+        console.log('Error code:', error.code);
+        console.log('Error message:', error.message);
+
+        setIsDetectingLocation(false);
+
+        // Map error codes to explicit required user messages (Requirement 7, 8, 9)
+        // Code 1 = PERMISSION_DENIED
+        // Code 2 = POSITION_UNAVAILABLE
+        // Code 3 = TIMEOUT
+        if (error.code === 1) {
+          setLocationError({
+            type: 'permission_denied',
+            message: 'Location permission is blocked. Please enable location permission for MAMA YIE in your browser settings.',
+            canRetry: true,
+          });
+        } else if (error.code === 2) {
+          setLocationError({
+            type: 'position_unavailable',
+            message: 'Your location could not be detected right now. Please check that Location/GPS is enabled on your phone and try again.',
+            canRetry: true,
+          });
+        } else if (error.code === 3) {
+          setLocationError({
+            type: 'timeout',
+            message: "We're taking too long to get your location. Please make sure GPS/Location is enabled and try again.",
+            canRetry: true,
+          });
         } else {
-          setPermissionStatusMessage('Unable to retrieve your precise location. Showing facilities in the Kumasi district.');
+          setLocationError({
+            type: 'generic',
+            message: 'Your location could not be detected right now. Please check that Location/GPS is enabled on your phone and try again.',
+            canRetry: true,
+          });
         }
-        // Fallback search with default Kumasi coordinates so user isn't stuck
-        fetchNearbyFacilities(6.6885, -1.6244, searchQuery, activeFilter);
       },
-      {
-        enableHighAccuracy: false,
-        timeout: 10000,
-        maximumAge: 300000, // 5 min cache
-      }
+      geoOptions
     );
   };
 
-  // Handle manual query submit
+  // Handle manual query submit (Requirement 15: separate from GPS location)
   const handleManualSearch = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    const lat = userCoords?.lat ?? 6.6885;
-    const lng = userCoords?.lng ?? -1.6244;
-    fetchNearbyFacilities(lat, lng, searchQuery, activeFilter);
+    setSearchMode('manual');
+    fetchFacilitiesByQuery(searchQuery, activeFilter);
   };
 
   // Preset location quick chips
   const handlePresetSelect = (preset: string) => {
     setSearchQuery(preset);
-    const lat = userCoords?.lat ?? 6.6885;
-    const lng = userCoords?.lng ?? -1.6244;
-    fetchNearbyFacilities(lat, lng, preset, activeFilter);
+    setSearchMode('manual');
+    fetchFacilitiesByQuery(preset, activeFilter);
   };
 
   // Filter change
   const handleFilterChange = (filter: 'all' | 'verified' | 'emergency' | 'maternity') => {
     setActiveFilter(filter);
-    const lat = userCoords?.lat ?? 6.6885;
-    const lng = userCoords?.lng ?? -1.6244;
-    fetchNearbyFacilities(lat, lng, searchQuery, filter);
+    if (searchMode === 'gps' && userCoords) {
+      fetchFacilitiesByCoords(userCoords.lat, userCoords.lng, filter);
+    } else {
+      fetchFacilitiesByQuery(searchQuery, filter);
+    }
   };
 
-  // Load initial results once if user hasn't searched yet
+  // Load initial facilities directory without hardcoding or claiming fake coordinates
   useEffect(() => {
-    fetchNearbyFacilities(6.6885, -1.6244, '', 'all');
+    fetchFacilitiesByQuery('', 'all');
   }, []);
 
   return (
@@ -224,18 +326,42 @@ export const HospitalLocator: React.FC<HospitalLocatorProps> = ({ onBackToPartne
       {/* Location Activation Card */}
       <div className="bg-white rounded-3xl p-5 border-2 border-[#F0EBE9] shadow-xs space-y-4">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
-              GPS Proximity Search
-            </span>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+                GPS Proximity Search
+              </span>
+              {userCoords && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#1C592E] bg-[#EDF7EE] px-2.5 py-0.5 rounded-full border border-[#BAE3C2]">
+                  <CheckCircle2 className="w-3 h-3 text-[#2E7D46]" />
+                  <span>Location detected</span>
+                </span>
+              )}
+            </div>
+
             <h3 className="font-serif font-bold text-lg text-[#1E232B]">
-              Use Current Location
+              {userCoords ? 'Using your current location' : 'Use Current Location'}
             </h3>
-            <p className="text-xs text-[#64748B] mt-0.5 leading-relaxed">
-              {userCoords
-                ? `Using your coordinates (${userCoords.lat.toFixed(3)}, ${userCoords.lng.toFixed(3)})`
-                : 'Request location once to calculate accurate travel distance to the closest maternity wards.'}
-            </p>
+
+            {userCoords ? (
+              <div className="space-y-0.5 text-xs">
+                <p className="font-mono text-[#1E232B] font-semibold">
+                  {userCoords.lat.toFixed(4)}, {userCoords.lng.toFixed(4)}
+                </p>
+                <p className="text-[#64748B]">
+                  Accuracy: approximately {formatAccuracy(userCoords.accuracy)}
+                </p>
+                {userCoords.accuracy > 1000 && (
+                  <p className="text-[#D97706] font-medium text-[11px] bg-[#FFFBEB] px-2.5 py-1 rounded-lg border border-[#FDE68A] mt-1">
+                    Your location is approximate. Results may be less accurate.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs text-[#64748B] mt-0.5 leading-relaxed">
+                Allow location access to find facilities near you.
+              </p>
+            )}
           </div>
           <div className="w-10 h-10 rounded-2xl bg-[#FDF2F5] text-[#E61964] flex items-center justify-center shrink-0">
             <MapPin className="w-5 h-5" />
@@ -245,31 +371,63 @@ export const HospitalLocator: React.FC<HospitalLocatorProps> = ({ onBackToPartne
         {/* Action Button: Get Location */}
         <button
           id="request-user-location-btn"
+          type="button"
           onClick={handleRequestLocation}
-          disabled={loading}
-          className="w-full py-3.5 rounded-2xl bg-[#E61964] hover:bg-[#D01255] active:scale-[0.99] text-white font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+          disabled={isDetectingLocation}
+          className="w-full py-3.5 rounded-2xl bg-[#E61964] hover:bg-[#D01255] active:scale-[0.99] text-white font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
         >
-          <Navigation className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          <span>{loading ? 'Finding Nearby Facilities...' : 'Use My Current Location'}</span>
+          {isDetectingLocation ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Detecting your location...</span>
+            </>
+          ) : (
+            <>
+              <Navigation className="w-4 h-4" />
+              <span>Use My Current Location</span>
+            </>
+          )}
         </button>
 
-        {/* Permission Denied / Explanation Notice */}
-        {permissionDenied && (
+        {/* Permission Denied / Position Unavailable / Timeout / Error Notice */}
+        {locationError && (
           <motion.div
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-3.5 bg-[#FAF8F8] rounded-2xl border border-[#F0EBE9] space-y-2 text-xs"
+            className="p-4 bg-[#FAF8F8] rounded-2xl border border-[#F0EBE9] space-y-3 text-xs"
           >
-            <div className="flex items-start gap-2 text-[#991B1B]">
-              <Info className="w-4 h-4 shrink-0 mt-0.5 text-[#E61964]" />
-              <p className="leading-relaxed">
-                {permissionStatusMessage ||
-                  'Location access was denied. You can enable location permission in your device settings, or search manually below.'}
-              </p>
+            <div className="flex items-start gap-2.5 text-[#991B1B]">
+              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-[#E61964]" />
+              <div className="space-y-1">
+                <p className="font-semibold leading-relaxed text-[#1E232B]">
+                  {locationError.message}
+                </p>
+                {locationError.type === 'permission_denied' && (
+                  <p className="text-[11px] text-[#64748B] leading-relaxed">
+                    Location access is turned off. Please allow location access in your browser settings, or search by town, neighborhood, or facility name.
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="text-[11px] text-[#64748B] bg-white p-2.5 rounded-xl border border-[#F0EBE9]">
-              <strong>How to enable:</strong> In your browser tap the lock / settings icon beside the URL bar → Permissions → Allow Location, then tap "Use My Current Location" again.
-            </div>
+
+            {locationError.type === 'permission_denied' && (
+              <div className="text-[11px] text-[#64748B] bg-white p-2.5 rounded-xl border border-[#F0EBE9] leading-relaxed">
+                <strong>How to enable:</strong> In your browser tap the lock / settings icon beside the URL bar → Permissions → Allow Location, then tap &ldquo;Try Again&rdquo;.
+              </div>
+            )}
+
+            {locationError.canRetry && (
+              <button
+                id="location-try-again-btn"
+                type="button"
+                onClick={handleRequestLocation}
+                disabled={isDetectingLocation}
+                className="w-full py-2.5 px-3 bg-white hover:bg-[#FDF2F5] text-[#E61964] border border-[#F8B4C8] rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+              >
+                <Navigation className="w-3.5 h-3.5" />
+                <span>Try Again</span>
+              </button>
+            )}
           </motion.div>
         )}
 
@@ -285,7 +443,7 @@ export const HospitalLocator: React.FC<HospitalLocatorProps> = ({ onBackToPartne
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="e.g. Suntreso, Bantama, Adum, KATH..."
+                placeholder="e.g. Suntreso, Bantama, Adum, KATH, Accra, Madina..."
                 className="w-full pl-9 pr-3 py-2.5 bg-[#FAF8F8] border border-[#F0EBE9] rounded-xl text-xs text-[#1E232B] focus:outline-none focus:border-[#E61964] focus:bg-white"
               />
               <Search className="w-4 h-4 text-[#64748B] absolute left-3 top-3" />
@@ -294,7 +452,11 @@ export const HospitalLocator: React.FC<HospitalLocatorProps> = ({ onBackToPartne
                   type="button"
                   onClick={() => {
                     setSearchQuery('');
-                    fetchNearbyFacilities(userCoords?.lat ?? 6.6885, userCoords?.lng ?? -1.6244, '', activeFilter);
+                    if (searchMode === 'gps' && userCoords) {
+                      fetchFacilitiesByCoords(userCoords.lat, userCoords.lng, activeFilter);
+                    } else {
+                      fetchFacilitiesByQuery('', activeFilter);
+                    }
                   }}
                   className="absolute right-2.5 top-2.5 text-[#64748B] hover:text-[#1E232B]"
                 >
@@ -314,7 +476,7 @@ export const HospitalLocator: React.FC<HospitalLocatorProps> = ({ onBackToPartne
           {/* Quick preset location chips */}
           <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 no-scrollbar text-[11px]">
             <span className="text-[#64748B] shrink-0 font-medium">Quick areas:</span>
-            {['Suntreso', 'Bantama', 'Adum', 'Manhyia', 'Tafo', 'Accra'].map((chip) => (
+            {['Suntreso', 'Bantama', 'Adum', 'Manhyia', 'Tafo', 'Accra', 'Madina'].map((chip) => (
               <button
                 key={chip}
                 type="button"
@@ -414,7 +576,11 @@ export const HospitalLocator: React.FC<HospitalLocatorProps> = ({ onBackToPartne
               onClick={() => {
                 setSearchQuery('');
                 setActiveFilter('all');
-                fetchNearbyFacilities(6.6885, -1.6244, '', 'all');
+                if (searchMode === 'gps' && userCoords) {
+                  fetchFacilitiesByCoords(userCoords.lat, userCoords.lng, 'all');
+                } else {
+                  fetchFacilitiesByQuery('', 'all');
+                }
               }}
               className="mt-2 px-4 py-2 bg-[#FDF2F5] border border-[#F8B4C8] text-xs font-bold text-[#E61964] rounded-xl hover:bg-[#FCE7F0]"
             >

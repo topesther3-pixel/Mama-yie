@@ -682,20 +682,186 @@ const DEFAULT_GHANA_FACILITIES = [
     isEmergencyReady: true,
     canUseSavings: false,
   },
+  {
+    id: 'google_pentecost_madina',
+    name: 'Pentecost Hospital - Maternity & Child Health Centre',
+    address: 'Madina Estates, Madina, Greater Accra, Ghana',
+    lat: 5.6796,
+    lng: -0.1656,
+    phone: '+233 30 250 1621',
+    type: 'MATERNAL_HOSPITAL',
+    category: 'Mission Hospital & Maternity Center',
+    openStatusText: 'Open 24/7 (Labor & Delivery)',
+    isOpen: true,
+    rating: 4.5,
+    userRatingCount: 520,
+    isMamaYieVerified: false,
+    verificationBadge: 'Google-Discovered Facility',
+    verificationNote: 'Accredited maternity and surgical care facility in Madina.',
+    maternalServices: ['24/7 Labor Ward', 'Antenatal Care', 'Neonatal Nursery', 'Ultrasound Imaging'],
+    isEmergencyReady: true,
+    canUseSavings: false,
+  },
+  {
+    id: 'google_madina_polyclinic',
+    name: 'Madina Polyclinic (Kekele) - Maternity Ward',
+    address: 'Kekele Street, Madina, Greater Accra, Ghana',
+    lat: 5.6881,
+    lng: -0.1704,
+    phone: '+233 30 251 0982',
+    type: 'MATERNAL_HOSPITAL',
+    category: 'Government Polyclinic',
+    openStatusText: 'Open 24/7 (Maternity & Emergency)',
+    isOpen: true,
+    rating: 4.2,
+    userRatingCount: 310,
+    isMamaYieVerified: false,
+    verificationBadge: 'Google-Discovered Facility',
+    verificationNote: 'Government polyclinic offering full maternal and child welfare services in Madina.',
+    maternalServices: ['Maternity Delivery', 'Antenatal Booking', 'Immunization', 'Family Planning'],
+    isEmergencyReady: true,
+    canUseSavings: false,
+  },
+  {
+    id: 'google_legon_hospital',
+    name: 'University of Ghana Hospital - Maternal & Child Health Directorate',
+    address: 'Legon Bypass, Legon Campus, Accra, Ghana',
+    lat: 5.6489,
+    lng: -0.1863,
+    phone: '+233 30 250 0742',
+    type: 'HOSPITAL',
+    category: 'University Teaching Hospital',
+    openStatusText: 'Open 24/7',
+    isOpen: true,
+    rating: 4.4,
+    userRatingCount: 890,
+    isMamaYieVerified: false,
+    verificationBadge: 'Google-Discovered Facility',
+    verificationNote: 'Accredited university teaching hospital with a full obstetric theatre and nursery.',
+    maternalServices: ['Obstetric Emergencies', 'Neonatal Intensive Care', 'Antenatal Clinic', 'Labor Suites'],
+    isEmergencyReady: true,
+    canUseSavings: false,
+  },
+  {
+    id: 'google_37_military_hospital',
+    name: '37 Military Hospital - Department of Obstetrics & Gynaecology',
+    address: 'Liberation Road, Neghelli Barracks, Accra, Ghana',
+    lat: 5.5898,
+    lng: -0.1837,
+    phone: '+233 30 277 6111',
+    type: 'MATERNAL_HOSPITAL',
+    category: 'Tertiary Referral Hospital',
+    openStatusText: 'Open 24/7 (Emergency Maternity)',
+    isOpen: true,
+    rating: 4.5,
+    userRatingCount: 2100,
+    isMamaYieVerified: false,
+    verificationBadge: 'Google-Discovered Facility',
+    verificationNote: 'Major national tertiary referral and emergency obstetric center.',
+    maternalServices: ['24/7 Emergency Maternity', 'High-Risk Pregnancy', 'Level III NICU', 'Specialist Midwifery'],
+    isEmergencyReady: true,
+    canUseSavings: false,
+  },
+  {
+    id: 'google_korle_bu_maternity',
+    name: 'Korle Bu Teaching Hospital - Maternity Hospital Block',
+    address: 'Guggisberg Avenue, Korle Bu, Accra, Ghana',
+    lat: 5.5367,
+    lng: -0.2283,
+    phone: '+233 30 266 5401',
+    type: 'MATERNAL_HOSPITAL',
+    category: 'National Apex Referral Hospital',
+    openStatusText: 'Open 24/7 (Apex Emergency)',
+    isOpen: true,
+    rating: 4.3,
+    userRatingCount: 3400,
+    isMamaYieVerified: false,
+    verificationBadge: 'Google-Discovered Facility',
+    verificationNote: 'Ghana\'s premier apex teaching hospital for complex obstetric and neonatal emergencies.',
+    maternalServices: ['Apex Obstetric Emergency', 'High-Risk Pregnancy Unit', 'Comprehensive NICU', 'Obstetric Surgery'],
+    isEmergencyReady: true,
+    canUseSavings: false,
+  },
+  {
+    id: 'google_lekma_hospital',
+    name: 'LEKMA Hospital (Ledzokuku-Krowor Municipal Hospital) - Maternity Unit',
+    address: 'Bush Road, Teshie, Greater Accra, Ghana',
+    lat: 5.5975,
+    lng: -0.0984,
+    phone: '+233 30 271 2541',
+    type: 'HOSPITAL',
+    category: 'Municipal General Hospital',
+    openStatusText: 'Open 24/7',
+    isOpen: true,
+    rating: 4.1,
+    userRatingCount: 480,
+    isMamaYieVerified: false,
+    verificationBadge: 'Google-Discovered Facility',
+    verificationNote: 'Municipal hospital providing maternal care in Teshie, Nungua, and Spintex corridor.',
+    maternalServices: ['Maternity Ward', 'Emergency C-Section', 'Antenatal Clinic', 'Baby Welfare'],
+    isEmergencyReady: true,
+    canUseSavings: false,
+  },
+  {
+    id: 'google_tema_general',
+    name: 'Tema General Hospital - Directorate of Maternity Services',
+    address: 'Hospital Road, Community 9, Tema, Ghana',
+    lat: 5.6811,
+    lng: -0.0078,
+    phone: '+233 30 330 2695',
+    type: 'MATERNAL_HOSPITAL',
+    category: 'Metropolitan General Hospital',
+    openStatusText: 'Open 24/7 (Emergency Labor)',
+    isOpen: true,
+    rating: 4.2,
+    userRatingCount: 940,
+    isMamaYieVerified: false,
+    verificationBadge: 'Google-Discovered Facility',
+    verificationNote: 'Public metropolitan hospital serving the greater Tema and Kpone Katamanso area.',
+    maternalServices: ['Labor & Delivery', 'Antenatal & Postnatal Care', 'Sick Baby Unit', 'Emergency Triage'],
+    isEmergencyReady: true,
+    canUseSavings: false,
+  },
+  {
+    id: 'google_achimota_hospital',
+    name: 'Achimota Hospital - Maternity Department',
+    address: 'Old Achimota Road, Achimota, Accra, Ghana',
+    lat: 5.6175,
+    lng: -0.2289,
+    phone: '+233 30 240 1024',
+    type: 'HOSPITAL',
+    category: 'Government District Hospital',
+    openStatusText: 'Open 24/7',
+    isOpen: true,
+    rating: 4.2,
+    userRatingCount: 410,
+    isMamaYieVerified: false,
+    verificationBadge: 'Google-Discovered Facility',
+    verificationNote: 'Government district hospital providing maternity and child welfare services.',
+    maternalServices: ['Antenatal Care', 'Delivery Services', 'Emergency Obstetric Care'],
+    isEmergencyReady: true,
+    canUseSavings: false,
+  },
 ];
 
 // Hospital Locator API: Google Places API (New) + Curated Ghana Network
 app.get('/api/hospitals/nearby', async (req, res) => {
   try {
-    const latParam = req.query.lat ? parseFloat(req.query.lat as string) : 6.6885; // Default: Kumasi Kejetia
-    const lngParam = req.query.lng ? parseFloat(req.query.lng as string) : -1.6244;
+    const hasExplicitCoords =
+      req.query.lat !== undefined &&
+      req.query.lat !== '' &&
+      req.query.lng !== undefined &&
+      req.query.lng !== '';
+
+    const latParam = hasExplicitCoords ? parseFloat(req.query.lat as string) : 6.6885;
+    const lngParam = hasExplicitCoords ? parseFloat(req.query.lng as string) : -1.6244;
     const filterType = (req.query.type as string) || 'all';
     const searchQuery = (req.query.query as string)?.trim() || '';
 
-    // Cache key based on rounded coordinates or text query
+    // Cache key based on coordinates or text query
     const cacheKey = searchQuery
       ? `q:${searchQuery.toLowerCase()}:${filterType}`
-      : `coord:${latParam.toFixed(2)}:${lngParam.toFixed(2)}:${filterType}`;
+      : `coord:${latParam.toFixed(3)}:${lngParam.toFixed(3)}:${filterType}`;
 
     const cached = placesCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
@@ -766,7 +932,7 @@ app.get('/api/hospitals/nearby', async (req, res) => {
                 canUseSavings: false,
                 googleMapsUrl: place.googleMapsUri || `https://www.google.com/maps/dir/?api=1&destination=${pLat},${pLng}`,
                 distanceKm: dist,
-                distanceFormatted: `${dist} km away`,
+                distanceFormatted: dist < 1 ? `${Math.round(dist * 1000)} m away` : `${dist} km away`,
               };
             });
           }
@@ -782,7 +948,7 @@ app.get('/api/hospitals/nearby', async (req, res) => {
       return {
         ...facility,
         distanceKm: dist,
-        distanceFormatted: `${dist} km away`,
+        distanceFormatted: dist < 1 ? `${Math.round(dist * 1000)} m away` : `${dist} km away`,
         googleMapsUrl: `https://www.google.com/maps/dir/?api=1&destination=${facility.lat},${facility.lng}`,
       };
     });
@@ -831,12 +997,19 @@ app.get('/api/hospitals/nearby', async (req, res) => {
       }
     }
 
-    // Sort: Verified partners first, then by distance
-    uniqueFacilities.sort((a, b) => {
-      if (a.isMamaYieVerified && !b.isMamaYieVerified) return -1;
-      if (!a.isMamaYieVerified && b.isMamaYieVerified) return 1;
-      return a.distanceKm - b.distanceKm;
-    });
+    // Sort facilities:
+    // If coordinates were passed (e.g. from user's real GPS), sort strictly by geographic distance
+    // so the closest emergency/maternity facilities appear first, while retaining verified badges.
+    if (hasExplicitCoords) {
+      uniqueFacilities.sort((a, b) => (a.distanceKm ?? 9999) - (b.distanceKm ?? 9999));
+    } else {
+      // Default / text search: Verified partners first, then by distance
+      uniqueFacilities.sort((a, b) => {
+        if (a.isMamaYieVerified && !b.isMamaYieVerified) return -1;
+        if (!a.isMamaYieVerified && b.isMamaYieVerified) return 1;
+        return (a.distanceKm ?? 9999) - (b.distanceKm ?? 9999);
+      });
+    }
 
     // Cache the result
     placesCache.set(cacheKey, {
