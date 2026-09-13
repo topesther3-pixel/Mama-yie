@@ -1,6 +1,6 @@
 {
   "name": "Mama Yie",
   "description": "An AI-powered companion that helps expecting mothers predict costs, earn toward their savings goal, and access discounted care — without needing spare cash to start.",
-  "requestFramePermissions": ["geolocation"],
+  "requestFramePermissions": ["geolocation", "microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

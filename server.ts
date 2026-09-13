@@ -735,7 +735,7 @@ app.post('/api/ama/chat', async (req, res) => {
         );
 
         const geminiPromise = ai.models.generateContent({
-          model: 'gemini-3.5-flash-lite',
+          model: 'gemini-3.8-flash',
           contents: prompt,
           config: {
             systemInstruction: AMA_SYSTEM_INSTRUCTION,
