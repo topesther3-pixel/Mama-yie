@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext';
 import { ArrowRight, Sparkles, ShieldCheck, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { sendPhoneOtp } from '../services/authService';
+import mamaYieLogo from '../assets/mama_yie_logo.jpg';
 
 export const PhoneLogin: React.FC = () => {
   const { phoneNumber, setPhoneNumber, setCurrentView } = useApp();
@@ -44,18 +45,20 @@ export const PhoneLogin: React.FC = () => {
     <div id="phone-login-screen" className="min-h-screen flex flex-col justify-between px-6 py-8 max-w-md mx-auto bg-white">
       {/* Top Branding */}
       <div className="pt-6 sm:pt-10 flex flex-col items-center text-center">
-        {/* Mama Yie Logo */}
+        {/* Official Mama Yie Brand Logo */}
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
+          initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#E61964] to-[#F43F5E] flex items-center justify-center text-white font-serif font-bold text-2xl shadow-md mb-4"
+          className="flex items-center justify-center mb-1"
         >
-          MY
+          <img
+            src={mamaYieLogo}
+            alt="MAMA YIE"
+            className="w-auto h-24 sm:h-28 max-w-[220px] object-contain"
+            referrerPolicy="no-referrer"
+          />
         </motion.div>
-        <h1 className="font-serif font-bold text-2xl tracking-tight text-[#1E232B]">
-          MAMA YIE
-        </h1>
         <p className="text-sm font-medium text-[#64748B] mt-1">
           Safe motherhood, earned and saved.
         </p>
