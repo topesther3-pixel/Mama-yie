@@ -155,7 +155,7 @@ const AppContent: React.FC = () => {
   // 1. Phone Login View
   if (currentView === 'login') {
     return (
-      <div className="min-h-screen bg-[#FAF8F8]">
+      <div className="min-h-screen bg-white">
         <JudgeTourBar />
         <PhoneLogin />
       </div>

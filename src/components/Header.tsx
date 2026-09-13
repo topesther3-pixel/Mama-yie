@@ -193,7 +193,7 @@ export const Header: React.FC = () => {
               currentView === 'earn' ? 'bg-[#2E7D46] text-white' : 'bg-[#EDF7EE] text-[#1C592E] font-bold'
             }`}
           >
-            Earn Money (Numa)
+            Earn Money
           </button>
           <button
             onClick={() => setCurrentView('dashboard')}
